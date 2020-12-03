@@ -58,6 +58,16 @@ class StyleTextDomTransformer extends DomTransformer {
 
 ```
 
+## Installation
+Add this dependency your pubspec.yaml file:
+
+```
+dependencies:
+  enough_mail: ^0.1.0
+```
+The latest version or `enough_mail_html` is [![enough_mail_html version](https://img.shields.io/pub/v/enough_mail_html.svg)](https://pub.dartlang.org/packages/enough_mail_html).
+
+
 ## Features and bugs
 
 Please file feature requests and bugs at the [issue tracker][tracker].
