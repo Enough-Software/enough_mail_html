@@ -1,6 +1,6 @@
 name: enough_mail_html
-description: Generate HTML from an email mime message.
-version: 0.1.0
+description: Generate HTML from an email mime message. Eases handling of `MimeMessage` in the `enough_mail` package.
+version: 0.1.1
 homepage: https://github.com/Enough-Software/enough_mail_html
 
 environment:
