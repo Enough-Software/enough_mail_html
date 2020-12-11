@@ -8,8 +8,11 @@ environment:
 
 dependencies:
   html: ^0.14.0+4
-  enough_mail: ^0.0.34 
-    # path: ../enough_mail/
+  enough_mail: #^0.0.35 
+    git:
+      url: https://github.com/Enough-Software/enough_mail.git
+      ref: main
+    #path: ../enough_mail/
 
 dev_dependencies:
   pedantic: ^1.9.0
