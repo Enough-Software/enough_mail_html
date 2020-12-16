@@ -5,18 +5,8 @@ import 'package:enough_mail_html/enough_mail_html.dart';
 
 import 'text_search.dart';
 
-class ConvertTagsTextProcessor implements TextTransformer {
-  const ConvertTagsTextProcessor();
-
-  @override
-  String transform(
-      String text, MimeMessage message, TransformConfiguration configuration) {
-    return text.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-  }
-}
-
-class MergeAttachedImageTextProcessor extends TextTransformer {
-  const MergeAttachedImageTextProcessor();
+class MergeAttachedImageTextTransformer extends TextTransformer {
+  const MergeAttachedImageTextTransformer();
 
   @override
   String transform(

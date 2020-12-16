@@ -1,4 +1,7 @@
-import 'package:enough_mail_html/src/text/text_transformers.dart';
+import 'package:enough_mail_html/src/text/convert_tags_text_transformer.dart';
+import 'package:enough_mail_html/src/text/linebreak_text_transformer.dart';
+import 'package:enough_mail_html/src/text/links_text_transformer.dart';
+import 'package:enough_mail_html/src/text/merge_image_text_transformer.dart';
 
 import 'dom/image_transformers.dart';
 import 'dom/link_transformers.dart';
@@ -83,8 +86,10 @@ class TransformConfiguration {
   ];
 
   static const List<TextTransformer> standardTextTransformers = [
-    ConvertTagsTextProcessor(),
-    MergeAttachedImageTextProcessor(),
+    ConvertTagsTextTransformer(),
+    MergeAttachedImageTextTransformer(),
+    LinksTextTransformer(),
+    LineBreakTextTransformer(),
   ];
 }
 
