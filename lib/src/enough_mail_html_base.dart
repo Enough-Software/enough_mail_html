@@ -126,8 +126,11 @@ class MimeMessageTransformer {
     if (html == null) {
       var textPart = message.decodeTextPlainPart();
       if (textPart == null) {
-        //TODO there might inline images or other parts...
-        textPart = configuration.emptyMessageText;
+        if (message.hasInlineParts()) {
+          textPart = '';
+        } else {
+          textPart = configuration.emptyMessageText;
+        }
       } else {
         textPart = transformPlainText(textPart, message);
       }
