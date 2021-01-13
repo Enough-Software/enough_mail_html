@@ -23,6 +23,9 @@ class TransformConfiguration {
   /// Requires to have the string `{text}` into which the plain text message is pasted, e.g. `<p>{text}</p>`.
   final String plainTextHtmlTemplate;
 
+  /// The maximum width for embedded images. It make sense to limit this to reduce the generated HTML size.
+  final int maxImageWidth;
+
   /// The list of DOM transformers being used
   final List<DomTransformer> domTransformers;
 
@@ -35,6 +38,7 @@ class TransformConfiguration {
   const TransformConfiguration(
       this.blockExternalImages,
       this.emptyMessageText,
+      this.maxImageWidth,
       this.domTransformers,
       this.textTransfomers,
       this.plainTextHtmlTemplate,
@@ -45,6 +49,7 @@ class TransformConfiguration {
       TransformConfiguration(
           false,
           standardEmptyMessageText,
+          standardMaxImageWidth,
           standardDomTransformers,
           standardTextTransformers,
           standardPlainTextHtmlTemplate,
@@ -55,6 +60,7 @@ class TransformConfiguration {
   static TransformConfiguration create({
     bool blockExternalImages,
     String emptyMessageText,
+    int maxImageWidth,
     String plainTextHtmlTemplate,
     List<DomTransformer> customDomTransformers,
     List<TextTransformer> customTextTransfomers,
@@ -66,15 +72,18 @@ class TransformConfiguration {
     final textTransformers = customTextTransfomers != null
         ? [...standardTextTransformers, ...customTextTransfomers]
         : standardTextTransformers;
+    maxImageWidth ??= standardMaxImageWidth;
     return TransformConfiguration(
         blockExternalImages ?? false,
         emptyMessageText ?? standardEmptyMessageText,
+        maxImageWidth,
         domTransformers,
         textTransformers,
         plainTextHtmlTemplate ?? standardPlainTextHtmlTemplate,
         customValues);
   }
 
+  static const int standardMaxImageWidth = null;
   static const String standardPlainTextHtmlTemplate = '<p>{text}</p>';
   static const String standardEmptyMessageText =
       'This message has no contents.';
@@ -163,15 +172,18 @@ abstract class TextTransformer {
 extension HtmlTransform on MimeMessage {
   /// Transforms this message to HTML code.
   /// Set [blockExternalImages] to `true` in case external images should be blocked.
+  /// Optionally specify the [maxImageWidth] to set the maximum width for embedded images.
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
-  /// Optionally specify the [transformConfiguration] to control further aspects of the transformation.
+  /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
   String transformToHtml(
       {bool blockExternalImages,
+      int maxImageWidth,
       String emptyMessageText,
       TransformConfiguration transformConfiguration}) {
     transformConfiguration ??= TransformConfiguration.create(
         blockExternalImages: blockExternalImages,
-        emptyMessageText: emptyMessageText);
+        emptyMessageText: emptyMessageText,
+        maxImageWidth: maxImageWidth);
     final transformer = MimeMessageTransformer(transformConfiguration);
     return transformer.toHtml(this);
   }
