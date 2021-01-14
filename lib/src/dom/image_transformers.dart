@@ -27,6 +27,11 @@ class ImageTransformer implements DomTransformer {
             final data =
                 toImageData(part, contentType.mediaType, configuration);
             imageElement.attributes['src'] = data;
+            if (imageElement.parent?.localName != 'a') {
+              var anchor = Element.html('<a href="cid://$cid"></a>');
+              anchor.append(Element.html(imageElement.outerHtml));
+              imageElement.replaceWith(anchor);
+            }
           }
         } else if (src.startsWith('http')) {
           if (configuration.blockExternalImages) {
@@ -49,8 +54,8 @@ class ImageTransformer implements DomTransformer {
         if (!usedContentIds.contains(cid)) {
           final part = message.getPart(info.fetchId);
           final data = toImageData(part, info.mediaType, configuration);
-          final imageElement =
-              Element.html('<img src="$data" alt="${info.fileName}" />');
+          final imageElement = Element.html(
+              '<a href="cid://$cid"><img src="$data" alt="${info.fileName}" /></a>');
           document.body.append(imageElement);
         }
       }
