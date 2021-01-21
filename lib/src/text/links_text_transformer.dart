@@ -14,7 +14,12 @@ class LinksTextTransformer extends TextTransformer {
         endSearchPatternCanBeEndOfText: true);
     String nextLink;
     while ((nextLink = search.next()) != null) {
-      print(nextLink);
+      if (nextLink.endsWith('.') ||
+          nextLink.endsWith(',') ||
+          nextLink.endsWith(';') ||
+          nextLink.endsWith(':')) {
+        nextLink = nextLink.substring(0, nextLink.length - 1);
+      }
       text = text.replaceFirst(nextLink, '<a href="$nextLink">$nextLink</a>');
     }
     return text;

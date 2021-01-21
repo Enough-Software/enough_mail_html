@@ -27,5 +27,24 @@ void main() {
       expect(transformer.transform(input, null, null),
           'hello <a href="https://domain.com?query=12329183921kskd">https://domain.com?query=12329183921kskd</a>\r\nworld');
     });
+
+    test('https with dot at end', () {
+      final input = 'hello https://domain.com?query=12329183921kskd.';
+      final transformer = LinksTextTransformer();
+      expect(transformer.transform(input, null, null),
+          'hello <a href="https://domain.com?query=12329183921kskd">https://domain.com?query=12329183921kskd</a>.');
+    });
+    test('https with colon at end', () {
+      final input = 'hello https://domain.com?query=12329183921kskd,';
+      final transformer = LinksTextTransformer();
+      expect(transformer.transform(input, null, null),
+          'hello <a href="https://domain.com?query=12329183921kskd">https://domain.com?query=12329183921kskd</a>,');
+    });
+    test('https with semicolon at end', () {
+      final input = 'hello https://domain.com?query=12329183921kskd;';
+      final transformer = LinksTextTransformer();
+      expect(transformer.transform(input, null, null),
+          'hello <a href="https://domain.com?query=12329183921kskd">https://domain.com?query=12329183921kskd</a>;');
+    });
   });
 }
