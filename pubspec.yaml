@@ -11,7 +11,6 @@ dependencies:
   enough_mail: #^0.1.0
     git:
       url: https://github.com/Enough-Software/enough_mail.git
-      ref: main
     # path: ../enough_mail/
   image: ^2.1.19
 
