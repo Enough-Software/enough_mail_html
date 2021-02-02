@@ -1,5 +1,10 @@
+## 0.3.0
+- allow to specify the `maxImageWidth` when generating the HTML, this preserves memory
+- surround inline images with cid:// links - #5
+- remove common invalid characters at end of links
+
 ## 0.2.1
-- Always setting the `Content-Type` meta attribute to use 'utf-8' encoding.
+- Always setting the `Content-Type` meta attribute to use 'utf-8' encoding
 - Add inline images even when they are not referenced
 
 ## 0.2.0
