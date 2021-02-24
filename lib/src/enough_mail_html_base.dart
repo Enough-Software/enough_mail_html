@@ -20,6 +20,7 @@ class TransformConfiguration {
   final String emptyMessageText;
 
   /// The template for converting a plain text message into a HTML document.
+  ///
   /// Requires to have the string `{text}` into which the plain text message is pasted, e.g. `<p>{text}</p>`.
   final String plainTextHtmlTemplate;
 
@@ -56,6 +57,7 @@ class TransformConfiguration {
           null);
 
   /// Provides an easy optopn to customize a configuration.
+  ///
   /// Any specified [customDomTransformers] or [customTextTransformers] are being appended to the standard transformers.
   static TransformConfiguration create({
     bool blockExternalImages,
@@ -107,6 +109,7 @@ abstract class DomTransformer {
   const DomTransformer();
 
   /// Uses the `DOM` [document] and specified [message] to transform the `document`.
+  ///
   /// All changes will be visible to subsequenc transformers.
   void process(Document document, MimeMessage message,
       TransformConfiguration configuration);
@@ -170,21 +173,92 @@ abstract class TextTransformer {
 
 /// Extends the MimeMessage with the [transformToHtml] method.
 extension HtmlTransform on MimeMessage {
-  /// Transforms this message to HTML code.
+  /// Transforms this message to Document.
+  ///
   /// Set [blockExternalImages] to `true` in case external images should be blocked.
   /// Optionally specify the [maxImageWidth] to set the maximum width for embedded images.
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
   /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
-  String transformToHtml(
-      {bool blockExternalImages,
-      int maxImageWidth,
-      String emptyMessageText,
-      TransformConfiguration transformConfiguration}) {
+  Document transformToDocument({
+    bool blockExternalImages,
+    int maxImageWidth,
+    String emptyMessageText,
+    TransformConfiguration transformConfiguration,
+  }) {
     transformConfiguration ??= TransformConfiguration.create(
         blockExternalImages: blockExternalImages,
         emptyMessageText: emptyMessageText,
         maxImageWidth: maxImageWidth);
     final transformer = MimeMessageTransformer(transformConfiguration);
-    return transformer.toHtml(this);
+    return transformer.toDocument(this);
+  }
+
+  /// Transforms this message to HTML code.
+  ///
+  /// Set [blockExternalImages] to `true` in case external images should be blocked.
+  /// Optionally specify the [maxImageWidth] to set the maximum width for embedded images.
+  /// Optionally specify the [emptyMessageText] for messages that contain no other content.
+  /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
+  String transformToHtml({
+    bool blockExternalImages,
+    int maxImageWidth,
+    String emptyMessageText,
+    TransformConfiguration transformConfiguration,
+  }) {
+    final document = transformToDocument(
+        blockExternalImages: blockExternalImages,
+        maxImageWidth: maxImageWidth,
+        emptyMessageText: emptyMessageText,
+        transformConfiguration: transformConfiguration);
+    return document.outerHtml;
+  }
+
+  /// Transforms this message to the innter BODY HTML code.
+  ///
+  /// Set [blockExternalImages] to `true` in case external images should be blocked.
+  /// Optionally specify the [maxImageWidth] to set the maximum width for embedded images.
+  /// Optionally specify the [emptyMessageText] for messages that contain no other content.
+  /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
+  String transformToBodyInnerHtml({
+    bool blockExternalImages,
+    int maxImageWidth,
+    String emptyMessageText,
+    TransformConfiguration transformConfiguration,
+  }) {
+    final document = transformToDocument(
+        blockExternalImages: blockExternalImages,
+        maxImageWidth: maxImageWidth,
+        emptyMessageText: emptyMessageText,
+        transformConfiguration: transformConfiguration);
+    return document.body.innerHtml;
+  }
+
+  /// Quotes the body of this message for editing HTML.
+  ///
+  /// Optionally specify the [quoteHeaderTemplate], defaults to `MailConventions.defaultReplyHeaderTemplate`, for forwarding you can use the `MailConventions.defaultForwardHeaderTemplate`.
+  /// Set [blockExternalImages] to `true` in case external images should be blocked.
+  /// Optionally specify the [maxImageWidth] to set the maximum width for embedded images.
+  /// Optionally specify the [emptyMessageText] for messages that contain no other content.
+  /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
+  String quoteToHtml({
+    String quoteHeaderTemplate,
+    bool blockExternalImages,
+    int maxImageWidth,
+    String emptyMessageText,
+    TransformConfiguration transformConfiguration,
+  }) {
+    quoteHeaderTemplate ??= MailConventions.defaultReplyHeaderTemplate;
+    final quoteHeader = MessageBuilder.fillTemplate(quoteHeaderTemplate, this)
+        .replaceAll('&', '&amp;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll('\r\n', '<br/>');
+    final document = transformToDocument(
+        blockExternalImages: blockExternalImages,
+        maxImageWidth: maxImageWidth,
+        emptyMessageText: emptyMessageText,
+        transformConfiguration: transformConfiguration);
+    return '<p><br/></p><blockquote>$quoteHeader<br/>${document.body.innerHtml}</blockquote>';
   }
 }
