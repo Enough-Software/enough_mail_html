@@ -21,6 +21,8 @@ class ViewPortTransformer implements DomTransformer {
         viewportNeedsToBeAdded = false;
         metaElement.attributes['content'] =
             'width=device-width, initial-scale=1.0';
+      } else if (metaElement.attributes['charset'] != null) {
+        metaElement.attributes['charset'] = 'utf-8';
       } else {
         final httpEquiv = metaElement.attributes['http-equiv'];
         if (httpEquiv != null && httpEquiv.toLowerCase() == 'content-type') {
