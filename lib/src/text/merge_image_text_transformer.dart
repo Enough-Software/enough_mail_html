@@ -11,9 +11,9 @@ class MergeAttachedImageTextTransformer extends TextTransformer {
   String transform(
       String text, MimeMessage message, TransformConfiguration configuration) {
     final search = TextSearchIterator('[cid:', text, endSearchPattern: ']');
-    String nextImageDefinition;
+    String? nextImageDefinition;
     while ((nextImageDefinition = search.next()) != null) {
-      final cid = nextImageDefinition.substring(
+      final cid = nextImageDefinition!.substring(
           '[cid:'.length, nextImageDefinition.length - 2);
       final part = message.getPartWithContentId(cid);
       if (part != null) {

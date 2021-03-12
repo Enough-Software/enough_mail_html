@@ -2,13 +2,13 @@ class TextSearchIterator {
   int _searchIndex = 0;
   final String searchPattern;
   final String text;
-  final String endSearchPattern;
+  final String? endSearchPattern;
   final bool endSearchPatternCanBeEndOfText;
 
   TextSearchIterator(this.searchPattern, this.text,
       {this.endSearchPattern, this.endSearchPatternCanBeEndOfText = false});
 
-  String next() {
+  String? next() {
     if (_searchIndex == -1) {
       return null;
     }
@@ -18,7 +18,7 @@ class TextSearchIterator {
       return null;
     }
     if (endSearchPattern != null) {
-      final endIndex = text.indexOf(endSearchPattern, nextIndex + 1);
+      final endIndex = text.indexOf(endSearchPattern!, nextIndex + 1);
       if (endIndex == -1) {
         _searchIndex = -1;
         if (endSearchPatternCanBeEndOfText) {
@@ -39,13 +39,13 @@ class FlexibleEndTextSearchIterator {
   int _searchIndex = 0;
   final String searchPattern;
   final String text;
-  final List<String> endSearchPatterns;
+  final List<String>? endSearchPatterns;
   final bool endSearchPatternCanBeEndOfText;
 
   FlexibleEndTextSearchIterator(this.searchPattern, this.text,
       {this.endSearchPatterns, this.endSearchPatternCanBeEndOfText = false});
 
-  String next() {
+  String? next() {
     if (_searchIndex == -1) {
       return null;
     }
@@ -56,7 +56,7 @@ class FlexibleEndTextSearchIterator {
     }
     if (endSearchPatterns != null) {
       var endIndex = -1;
-      for (final endPattern in endSearchPatterns) {
+      for (final endPattern in endSearchPatterns!) {
         final end = text.indexOf(endPattern, nextIndex + 1);
         if (endIndex == -1) {
           endIndex = end;

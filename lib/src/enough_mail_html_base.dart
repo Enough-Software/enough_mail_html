@@ -25,7 +25,7 @@ class TransformConfiguration {
   final String plainTextHtmlTemplate;
 
   /// The maximum width for embedded images. It make sense to limit this to reduce the generated HTML size.
-  final int maxImageWidth;
+  final int? maxImageWidth;
 
   /// The list of DOM transformers being used
   final List<DomTransformer> domTransformers;
@@ -34,7 +34,7 @@ class TransformConfiguration {
   final List<TextTransformer> textTransfomers;
 
   /// Optional custom values, `null` unless specified.
-  final Map<String, dynamic> customValues;
+  final Map<String, dynamic>? customValues;
 
   const TransformConfiguration(
       this.blockExternalImages,
@@ -60,13 +60,13 @@ class TransformConfiguration {
   ///
   /// Any specified [customDomTransformers] or [customTextTransformers] are being appended to the standard transformers.
   static TransformConfiguration create({
-    bool blockExternalImages,
-    String emptyMessageText,
-    int maxImageWidth,
-    String plainTextHtmlTemplate,
-    List<DomTransformer> customDomTransformers,
-    List<TextTransformer> customTextTransfomers,
-    Map<String, dynamic> customValues,
+    bool? blockExternalImages,
+    String? emptyMessageText,
+    int? maxImageWidth,
+    String? plainTextHtmlTemplate,
+    List<DomTransformer>? customDomTransformers,
+    List<TextTransformer>? customTextTransfomers,
+    Map<String, dynamic>? customValues,
   }) {
     final domTransformers = customDomTransformers != null
         ? [...standardDomTransformers, ...customDomTransformers]
@@ -85,7 +85,7 @@ class TransformConfiguration {
         customValues);
   }
 
-  static const int standardMaxImageWidth = null;
+  static const int? standardMaxImageWidth = null;
   static const String standardPlainTextHtmlTemplate = '<p>{text}</p>';
   static const String standardEmptyMessageText =
       'This message has no contents.';
@@ -180,10 +180,10 @@ extension HtmlTransform on MimeMessage {
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
   /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
   Document transformToDocument({
-    bool blockExternalImages,
-    int maxImageWidth,
-    String emptyMessageText,
-    TransformConfiguration transformConfiguration,
+    bool? blockExternalImages,
+    int? maxImageWidth,
+    String? emptyMessageText,
+    TransformConfiguration? transformConfiguration,
   }) {
     transformConfiguration ??= TransformConfiguration.create(
         blockExternalImages: blockExternalImages,
@@ -200,10 +200,10 @@ extension HtmlTransform on MimeMessage {
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
   /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
   String transformToHtml({
-    bool blockExternalImages,
-    int maxImageWidth,
-    String emptyMessageText,
-    TransformConfiguration transformConfiguration,
+    bool? blockExternalImages,
+    int? maxImageWidth,
+    String? emptyMessageText,
+    TransformConfiguration? transformConfiguration,
   }) {
     final document = transformToDocument(
         blockExternalImages: blockExternalImages,
@@ -220,17 +220,17 @@ extension HtmlTransform on MimeMessage {
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
   /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
   String transformToBodyInnerHtml({
-    bool blockExternalImages,
-    int maxImageWidth,
-    String emptyMessageText,
-    TransformConfiguration transformConfiguration,
+    bool? blockExternalImages,
+    int? maxImageWidth,
+    String? emptyMessageText,
+    TransformConfiguration? transformConfiguration,
   }) {
     final document = transformToDocument(
         blockExternalImages: blockExternalImages,
         maxImageWidth: maxImageWidth,
         emptyMessageText: emptyMessageText,
         transformConfiguration: transformConfiguration);
-    return document.body.innerHtml;
+    return document.body!.innerHtml;
   }
 
   /// Quotes the body of this message for editing HTML.
@@ -241,11 +241,11 @@ extension HtmlTransform on MimeMessage {
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
   /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
   String quoteToHtml({
-    String quoteHeaderTemplate,
-    bool blockExternalImages,
-    int maxImageWidth,
-    String emptyMessageText,
-    TransformConfiguration transformConfiguration,
+    String? quoteHeaderTemplate,
+    bool? blockExternalImages,
+    int? maxImageWidth,
+    String? emptyMessageText,
+    TransformConfiguration? transformConfiguration,
   }) {
     quoteHeaderTemplate ??= MailConventions.defaultReplyHeaderTemplate;
     final quoteHeader = MessageBuilder.fillTemplate(quoteHeaderTemplate, this)
@@ -259,6 +259,6 @@ extension HtmlTransform on MimeMessage {
         maxImageWidth: maxImageWidth,
         emptyMessageText: emptyMessageText,
         transformConfiguration: transformConfiguration);
-    return '<p><br/></p><blockquote>$quoteHeader<br/>${document.body.innerHtml}</blockquote>';
+    return '<p><br/></p><blockquote>$quoteHeader<br/>${document.body!.innerHtml}</blockquote>';
   }
 }

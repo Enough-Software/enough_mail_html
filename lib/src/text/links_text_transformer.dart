@@ -15,7 +15,7 @@ class LinksTextTransformer extends TextTransformer {
       String text, MimeMessage message, TransformConfiguration configuration) {
     final matches = linkRegEx.allMatches(text);
     for (final match in matches) {
-      final group = match.group(0).trimLeft();
+      final group = match.group(0)!.trimLeft();
       final urlText =
           group.endsWith('.') ? group.substring(0, group.length - 1) : group;
       final url = group.startsWith(schemeRegEx) ? urlText : 'https://$urlText';

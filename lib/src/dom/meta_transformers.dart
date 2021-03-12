@@ -32,10 +32,10 @@ class ViewPortTransformer implements DomTransformer {
       }
     }
     if (contentTypeNeedsToBeAdded) {
-      document.head.append(_contentTypeMetaElement);
+      document.head!.append(_contentTypeMetaElement);
     }
     if (viewportNeedsToBeAdded) {
-      document.head.append(_viewPortMetaElement);
+      document.head!.append(_viewPortMetaElement);
     }
   }
 }

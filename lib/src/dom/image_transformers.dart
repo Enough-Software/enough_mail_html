@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import '../enough_mail_html_base.dart';
 import 'package:image/image.dart' as img;
 import 'package:html/dom.dart';
@@ -23,7 +24,7 @@ class ImageTransformer implements DomTransformer {
           final part = message.getPartWithContentId(cid);
           if (part != null) {
             usedContentIds.add(cid);
-            final contentType = part.getHeaderContentType();
+            final contentType = part.getHeaderContentType()!;
             final data =
                 toImageData(part, contentType.mediaType, configuration);
             imageElement.attributes['src'] = data;
@@ -52,26 +53,26 @@ class ImageTransformer implements DomTransformer {
       if (info.isImage) {
         final cid = info.cid;
         if (!usedContentIds.contains(cid)) {
-          final part = message.getPart(info.fetchId);
+          final part = message.getPart(info.fetchId)!;
           final data = toImageData(part, info.mediaType, configuration);
           final imageElement = Element.html(
               '<a href="cid://$cid"><img src="$data" alt="${info.fileName}" /></a>');
-          document.body.append(imageElement);
+          document.body!.append(imageElement);
         }
       }
     }
   }
 
-  static String toImageData(MimePart part, MediaType mediaType,
+  static String toImageData(MimePart part, MediaType? mediaType,
       TransformConfiguration configuration) {
-    var binary = part.decodeContentBinary();
+    var binary = part.decodeContentBinary()!;
     var mediaTypeText = mediaType?.text ?? 'image/png';
     if (configuration.maxImageWidth != null && binary.length > 64 * 1024) {
-      final image = img.decodeImage(binary);
-      if (image.width > configuration.maxImageWidth) {
+      final image = img.decodeImage(binary)!;
+      if (image.width > configuration.maxImageWidth!) {
         final resized =
             img.copyResize(image, width: configuration.maxImageWidth);
-        final reducedBinary = img.encodePng(resized);
+        final reducedBinary = img.encodePng(resized) as Uint8List;
         // print(
         //     'reduced from ${binary.length} to ${reducedBinary.length}  / ${reducedBinary.length / binary.length}');
         binary = reducedBinary;
