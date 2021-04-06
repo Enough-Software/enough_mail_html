@@ -18,7 +18,10 @@ class ImageTransformer implements DomTransformer {
       if (src != null) {
         if (src.startsWith('cid:')) {
           var cid = src.substring('cid:'.length);
-          if (!cid.startsWith('<')) {
+          if ((cid.startsWith('%3C') && cid.endsWith('%3E')) ||
+              (cid.startsWith('%3c') && cid.endsWith('%3e'))) {
+            cid = '<${cid.substring('%3C'.length, cid.length - '%3E'.length)}>';
+          } else if (!cid.startsWith('<')) {
             cid = '<$cid>';
           }
           final part = message.getPartWithContentId(cid);
