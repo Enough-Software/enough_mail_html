@@ -28,6 +28,24 @@ class ImageTransformer implements DomTransformer {
             final data =
                 toImageData(part, contentType.mediaType, configuration);
             imageElement.attributes['src'] = data;
+            final maxImageWidth = configuration.maxImageWidth;
+            if (maxImageWidth != null &&
+                imageElement.attributes['width'] != null &&
+                imageElement.attributes['height'] != null) {
+              final width = int.tryParse(imageElement.attributes['width']!);
+              final height = int.tryParse(imageElement.attributes['height']!);
+              if (width != null && width > maxImageWidth && height != null) {
+                final factor = maxImageWidth / width;
+                imageElement.attributes['width'] = maxImageWidth.toString();
+                imageElement.attributes['height'] =
+                    (height * factor).floor().toString();
+                final styleAttribute = imageElement.attributes['style'];
+                if (styleAttribute != null &&
+                    styleAttribute.contains('width')) {
+                  imageElement.attributes.remove('style');
+                }
+              }
+            }
             if (imageElement.parent?.localName != 'a') {
               final linkCid =
                   Uri.encodeComponent(cid.substring(1, cid.length - 1));
