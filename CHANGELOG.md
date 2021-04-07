@@ -1,3 +1,9 @@
+## 1.0.0
+- `enough_mail_html` is now [null safe](https://dart.dev/null-safety/tour) #6
+- use URL safe links when linking an embedded image with a `content-ID`
+- limit image width in `<img>` elements when `maxImageWidth` is specified
+
+
 ## 0.4.0
 - override `<meta charset="...">` elements to always be UTF-8
 - add `quoteToHtml(...)` extension method to `MimeMessage`
