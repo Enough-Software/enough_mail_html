@@ -18,10 +18,7 @@ class ImageTransformer implements DomTransformer {
       if (src != null) {
         if (src.startsWith('cid:')) {
           var cid = src.substring('cid:'.length);
-          if ((cid.startsWith('%3C') && cid.endsWith('%3E')) ||
-              (cid.startsWith('%3c') && cid.endsWith('%3e'))) {
-            cid = '<${cid.substring('%3C'.length, cid.length - '%3E'.length)}>';
-          } else if (!cid.startsWith('<')) {
+          if (!cid.startsWith('<')) {
             cid = '<$cid>';
           }
           final part = message.getPartWithContentId(cid);
@@ -32,7 +29,9 @@ class ImageTransformer implements DomTransformer {
                 toImageData(part, contentType.mediaType, configuration);
             imageElement.attributes['src'] = data;
             if (imageElement.parent?.localName != 'a') {
-              var anchor = Element.html('<a href="cid://$cid"></a>');
+              final linkCid =
+                  Uri.encodeComponent(cid.substring(1, cid.length - 1));
+              var anchor = Element.html('<a href="cid://$linkCid"></a>');
               anchor.append(Element.html(imageElement.outerHtml));
               imageElement.replaceWith(anchor);
             }
