@@ -224,4 +224,34 @@ void main() {
       expect(transform(input), 'hello some.one@domain.org,');
     });
   });
+
+  group('Full texts', () {
+    test('full text 1', () {
+      final input = '''hello some.one@domain.org,
+If you need help, please consider our domain.org-support which
+is available here: https://kb.domain.org/display/SUPPORT/get+support+here
+
+I hope you enjoy our service
+
+Yours
+  Support Team of domain.org
+https://domain.org
+Some text here
+  ''';
+
+      final expected = '''hello some.one@domain.org,
+If you need help, please consider our <a href="https://domain.org">domain.org</a>-support which
+is available here: <a href="https://kb.domain.org/display/SUPPORT/get+support+here">https://kb.domain.org/display/SUPPORT/get+support+here</a>
+
+I hope you enjoy our service
+
+Yours
+  Support Team of <a href="https://domain.org">domain.org</a>
+<a href="https://domain.org">https://domain.org</a>
+Some text here
+  ''';
+
+      expect(transform(input), expected);
+    });
+  });
 }

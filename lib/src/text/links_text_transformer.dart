@@ -7,24 +7,40 @@ class LinksTextTransformer extends TextTransformer {
   // not a perfect but good enough regular expression to match URLs in text. It also matches a space at the beginning and a dot at the end,
   // so this is filtered out manually in the found matches
   static final RegExp linkRegEx = RegExp(
-      r'(([a-z]{3,6}://)|(^|\s))([a-zA-Z0-9\-]+\.)+[a-z]{2,13}[\.\?\=\&\%\/\w\+\-]*');
+      r'(([a-z]{3,6}:\/\/)|(^|\s))([a-zA-Z0-9\-]+\.)+[a-z]{2,13}([\?\/]+[\.\?\=\&\%\/\w\+\-]*)?');
   const LinksTextTransformer();
 
   @override
   String transform(
       String text, MimeMessage message, TransformConfiguration configuration) {
     final matches = linkRegEx.allMatches(text);
+    if (matches.isEmpty) {
+      return text;
+    }
+    final buffer = StringBuffer();
+    var end = 0;
     for (final match in matches) {
-      final group = match.group(0)!.trimLeft();
       if (match.end < text.length && text[match.end] == '@') {
         // this is an email address, abort abort! ;-)
-        break;
+        continue;
       }
+      final originalGroup = match.group(0)!;
+      final group = originalGroup.trimLeft();
+      final start = match.start + originalGroup.length - group.length;
+      buffer.write(text.substring(end, start));
+      final endsWithDot = group.endsWith('.');
       final urlText =
-          group.endsWith('.') ? group.substring(0, group.length - 1) : group;
-      final url = group.startsWith(schemeRegEx) ? urlText : 'https://$urlText';
-      text = text.replaceFirst(urlText, '<a href="$url">$urlText</a>');
+          endsWithDot ? group.substring(0, group.length - 1) : group;
+      buffer.write('<a href="');
+      if (!group.startsWith(schemeRegEx)) {
+        buffer.write('https://');
+      }
+      buffer..write(urlText)..write('">')..write(urlText)..write('</a>');
+      end = endsWithDot ? match.end - 1 : match.end;
     }
-    return text;
+    if (end < text.length) {
+      buffer.write(text.substring(end));
+    }
+    return buffer.toString();
   }
 }
