@@ -73,6 +73,13 @@ void main() {
       expect(transform(input),
           'hello <a href="https://domain.com?query=12329183921kskd">https://domain.com?query=12329183921kskd</a>;');
     });
+
+    test('https url with + in the URL', () {
+      final input = 'look here https://domain.com/query+123+9183921kskd';
+
+      expect(transform(input),
+          'look here <a href="https://domain.com/query+123+9183921kskd">https://domain.com/query+123+9183921kskd</a>');
+    });
   });
 
   group('Test www domains', () {
@@ -147,11 +154,16 @@ void main() {
       expect(transform(input),
           'hello <a href="https://domain.com?query=12329183921kskd">domain.com?query=12329183921kskd</a> world.');
     });
-    test('at the end', () {
+    test('at the end with parameters', () {
       final input = 'hello domain.com?query=12329183921kskd';
-
       expect(transform(input),
           'hello <a href="https://domain.com?query=12329183921kskd">domain.com?query=12329183921kskd</a>');
+    });
+    test('at the end without parameters', () {
+      final input = 'hello domain.com';
+
+      expect(transform(input),
+          'hello <a href="https://domain.com">domain.com</a>');
     });
     test('with linebreak n', () {
       final input = 'hello domain.com?query=12329183921kskd\nworld';
@@ -202,6 +214,14 @@ void main() {
 
       expect(transform(input),
           'hello <a href="https://domain.com?query=12329183921kskd">domain.com?query=12329183921kskd</a>;');
+    });
+  });
+
+  group('Email addresses', () {
+    test('email', () {
+      final input = 'hello some.one@domain.org,';
+
+      expect(transform(input), 'hello some.one@domain.org,');
     });
   });
 }
