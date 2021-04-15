@@ -1,3 +1,7 @@
+## 1.1.0
+- Fix link detection and replace in plain text messages
+- Use fetchId rather than the content-ID for inline images. Links starting with `fetch://` will be generated.
+
 ## 1.0.0
 - `enough_mail_html` is now [null safe](https://dart.dev/null-safety/tour) #6
 - use URL safe links when linking an embedded image with a `content-ID`
