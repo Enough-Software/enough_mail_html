@@ -70,14 +70,17 @@ class ImageTransformer implements DomTransformer {
         message.findContentInfo(disposition: ContentDisposition.inline);
 
     for (final info in inlineInfos) {
+      //TODO inline elements should be added at their respective positions and not necessary below the text
       if (info.isImage) {
         final cid = info.cid;
-        if (!usedContentIds.contains(cid)) {
-          final part = message.getPart(info.fetchId)!;
-          final data = toImageData(part, info.mediaType, configuration);
-          final imageElement = Element.html(
-              '<a href="cid://$cid"><img src="$data" alt="${info.fileName}" /></a>');
-          document.body!.append(imageElement);
+        if (cid == null || !usedContentIds.contains(cid)) {
+          final part = message.getPart(info.fetchId);
+          if (part != null) {
+            final data = toImageData(part, info.mediaType, configuration);
+            final imageElement = Element.html(
+                '<a href="fetch://${info.fetchId}"><img src="$data" alt="${info.fileName}" /></a>');
+            document.body!.append(imageElement);
+          }
         }
       }
     }
