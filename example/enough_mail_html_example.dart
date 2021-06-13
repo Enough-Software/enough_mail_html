@@ -6,6 +6,10 @@ String simpleTransformExample(MimeMessage mimeMessage) {
   return mimeMessage.transformToHtml();
 }
 
+String generatePlainText(String htmlText) {
+  return HtmlToPlainTextConverter.convert(htmlText);
+}
+
 String configureImageBlockingOrEmptyMessage(MimeMessage mimeMessage) {
   return mimeMessage.transformToHtml(
       blockExternalImages: true, emptyMessageText: 'Nothing here, move on!');

@@ -1,8 +1,11 @@
 /// Converts HTML text into a plain text message.
 class HtmlToPlainTextConverter {
   static final _htmlEntityRegex = RegExp(r'&(#?)([a-zA-Z0-9]+?);');
-  static final htmlTagRegex =
+  static final _htmlTagRegex =
       RegExp(r'<[^>]*>', multiLine: true, caseSensitive: true);
+
+  // disallow instantiation:
+  HtmlToPlainTextConverter._();
 
   /// Converts the given [htmlText] into plain text.
   ///
@@ -10,7 +13,7 @@ class HtmlToPlainTextConverter {
   /// - Blockquotes are transformed into lines starting with `>`
   /// - HTML entities are transformed to their plain text representation
   static String convert(final String htmlText) {
-    final matches = htmlTagRegex.allMatches(htmlText).toList();
+    final matches = _htmlTagRegex.allMatches(htmlText).toList();
     final plainTextBuffer = StringBuffer();
     var lastMatchIndex = 0;
     for (var i = 0; i < matches.length; i++) {

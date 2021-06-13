@@ -1,7 +1,7 @@
 Generate html code from any email mime message for displaying it.
  
 ## Usage
-The `enough_mail_html` package defines the `decodeTextHtmlForDisplay()` extension method on `MimeMessage` of the [enough_mail](https://pub.dev/packages/enough_mail) package.
+The `enough_mail_html` package defines the `transformToHtml()` extension method on `MimeMessage` of the [enough_mail](https://pub.dev/packages/enough_mail) package.
 
 This method will always generate HTML, specifically also for plain text or empty messages.
 You can define your custom processors
@@ -18,6 +18,10 @@ import 'package:enough_mail_html/enough_mail_html.dart';
 String generateHtml(MimeMessage mimeMessage) {
   return mimeMessage.transformToHtml(
         blockExternalImages: false, emptyMessageText: 'Nothing here, move on!');
+}
+
+String generatePlainText(String htmlText) {
+  return HtmlToPlainTextConverter.convert(htmlText);
 }
 ```
 
@@ -63,7 +67,7 @@ Add this dependency your pubspec.yaml file:
 
 ```
 dependencies:
-  enough_mail_html: ^1.0.0
+  enough_mail_html: ^1.3.0
 ```
 The latest version or `enough_mail_html` is [![enough_mail_html version](https://img.shields.io/pub/v/enough_mail_html.svg)](https://pub.dartlang.org/packages/enough_mail_html).
 

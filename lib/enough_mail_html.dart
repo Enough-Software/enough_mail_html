@@ -5,5 +5,3 @@ library enough_mail_html;
 
 export 'src/enough_mail_html_base.dart';
 export 'src/converter.dart';
-
-export 'package:enough_mail/enough_mail.dart';

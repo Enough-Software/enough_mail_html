@@ -1,3 +1,6 @@
+## 1.3.0
+- Do not include the `enough_mail` package automatically to keep documentation simpler
+
 ## 1.2.0
 - Add `HtmlToPlainTextConverter` with HTML to plain text conversion
 
