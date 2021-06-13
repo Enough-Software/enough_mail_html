@@ -1,3 +1,6 @@
+## 1.2.0
+- Add `HtmlToPlainTextConverter` with HTML to plain text conversion
+
 ## 1.1.0
 - Fix link detection and replace in plain text messages
 - Use fetchId rather than the content-ID for inline images. Links starting with `fetch://` will be generated.
