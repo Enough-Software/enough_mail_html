@@ -3,8 +3,7 @@ import 'dart:typed_data';
 import '../enough_mail_html_base.dart';
 import 'package:image/image.dart' as img;
 import 'package:html/dom.dart';
-import 'package:enough_mail/mime_message.dart';
-import 'package:enough_mail/media_type.dart';
+import 'package:enough_mail/mime.dart';
 
 class ImageTransformer implements DomTransformer {
   const ImageTransformer();

@@ -1,5 +1,5 @@
 import '../enough_mail_html_base.dart';
-import 'package:enough_mail/mime_message.dart';
+import 'package:enough_mail/mime.dart';
 import 'package:html/dom.dart';
 
 class EnsureRelationNoreferrerTransformer implements DomTransformer {
