@@ -1,3 +1,4 @@
+import 'package:enough_mail_html/src/dom/dark_mode_transformer.dart';
 import 'package:enough_mail_html/src/text/convert_tags_text_transformer.dart';
 import 'package:enough_mail_html/src/text/linebreak_text_transformer.dart';
 import 'package:enough_mail_html/src/text/links_text_transformer.dart';
@@ -15,6 +16,9 @@ import 'package:html/dom.dart';
 class TransformConfiguration {
   /// Should external images be blocked?
   final bool blockExternalImages;
+
+  /// Should a dark mode be enabled? This might be required for devices with older browser versions
+  final bool enableDarkMode;
 
   /// The text that should be displayed in an otherwise empty message.
   final String emptyMessageText;
@@ -36,31 +40,39 @@ class TransformConfiguration {
   /// Optional custom values, `null` unless specified.
   final Map<String, dynamic>? customValues;
 
+  /// Creates a new transform configuration
+  ///
+  /// Compare [create] to have an easier to use building function
   const TransformConfiguration(
-      this.blockExternalImages,
-      this.emptyMessageText,
-      this.maxImageWidth,
-      this.domTransformers,
-      this.textTransfomers,
-      this.plainTextHtmlTemplate,
-      this.customValues);
+    this.blockExternalImages,
+    this.enableDarkMode,
+    this.emptyMessageText,
+    this.maxImageWidth,
+    this.domTransformers,
+    this.textTransfomers,
+    this.plainTextHtmlTemplate,
+    this.customValues,
+  );
 
   /// Provides easy access to a standard configuation that does not block external images.
   static const TransformConfiguration standardConfiguration =
       TransformConfiguration(
-          false,
-          standardEmptyMessageText,
-          standardMaxImageWidth,
-          standardDomTransformers,
-          standardTextTransformers,
-          standardPlainTextHtmlTemplate,
-          null);
+    false,
+    false,
+    standardEmptyMessageText,
+    standardMaxImageWidth,
+    standardDomTransformers,
+    standardTextTransformers,
+    standardPlainTextHtmlTemplate,
+    null,
+  );
 
   /// Provides an easy optopn to customize a configuration.
   ///
   /// Any specified [customDomTransformers] or [customTextTransformers] are being appended to the standard transformers.
   static TransformConfiguration create({
     bool? blockExternalImages,
+    bool? enableDarkMode,
     String? emptyMessageText,
     int? maxImageWidth,
     String? plainTextHtmlTemplate,
@@ -68,21 +80,23 @@ class TransformConfiguration {
     List<TextTransformer>? customTextTransfomers,
     Map<String, dynamic>? customValues,
   }) {
-    final domTransformers = customDomTransformers != null
+    final domTransformers = (customDomTransformers != null)
         ? [...standardDomTransformers, ...customDomTransformers]
-        : standardDomTransformers;
-    final textTransformers = customTextTransfomers != null
+        : [...standardDomTransformers];
+    final textTransformers = (customTextTransfomers != null)
         ? [...standardTextTransformers, ...customTextTransfomers]
         : standardTextTransformers;
     maxImageWidth ??= standardMaxImageWidth;
     return TransformConfiguration(
-        blockExternalImages ?? false,
-        emptyMessageText ?? standardEmptyMessageText,
-        maxImageWidth,
-        domTransformers,
-        textTransformers,
-        plainTextHtmlTemplate ?? standardPlainTextHtmlTemplate,
-        customValues);
+      blockExternalImages ?? false,
+      enableDarkMode ?? false,
+      emptyMessageText ?? standardEmptyMessageText,
+      maxImageWidth,
+      domTransformers,
+      textTransformers,
+      plainTextHtmlTemplate ?? standardPlainTextHtmlTemplate,
+      customValues,
+    );
   }
 
   static const int? standardMaxImageWidth = null;
@@ -94,6 +108,7 @@ class TransformConfiguration {
     RemoveScriptTransformer(),
     ImageTransformer(),
     EnsureRelationNoreferrerTransformer(),
+    DarkModeTransformer(),
   ];
 
   static const List<TextTransformer> standardTextTransformers = [
@@ -113,6 +128,13 @@ abstract class DomTransformer {
   /// All changes will be visible to subsequenc transformers.
   void process(Document document, MimeMessage message,
       TransformConfiguration configuration);
+
+  /// Adds a HEAD element if necessary
+  void ensureDocumentHeadIsAvailable(Document document) {
+    if (document.head == null) {
+      document.children.insert(0, Element.html('<head></head>'));
+    }
+  }
 }
 
 class MimeMessageTransformer {
@@ -148,6 +170,10 @@ class MimeMessageTransformer {
       }
       html =
           configuration.plainTextHtmlTemplate.replaceFirst('{text}', textPart);
+    } else if (configuration.enableDarkMode) {
+      // hack to remove any white bgcolor values:
+      html = html.replaceAll('bgcolor="#FFFFFF"', '');
+      html = html.replaceAll('bgcolor="#ffffff"', '');
     }
     final document = parse(html);
     // if (configuration.blockExternalImages) {
@@ -176,19 +202,23 @@ extension HtmlTransform on MimeMessage {
   /// Transforms this message to Document.
   ///
   /// Set [blockExternalImages] to `true` in case external images should be blocked.
+  /// Set [enableDarkMode] to `true` to enforce dark mode on devices with older browsers.
   /// Optionally specify the [maxImageWidth] to set the maximum width for embedded images.
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
   /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
   Document transformToDocument({
     bool? blockExternalImages,
+    bool? enableDarkMode,
     int? maxImageWidth,
     String? emptyMessageText,
     TransformConfiguration? transformConfiguration,
   }) {
     transformConfiguration ??= TransformConfiguration.create(
-        blockExternalImages: blockExternalImages,
-        emptyMessageText: emptyMessageText,
-        maxImageWidth: maxImageWidth);
+      blockExternalImages: blockExternalImages,
+      enableDarkMode: enableDarkMode,
+      emptyMessageText: emptyMessageText,
+      maxImageWidth: maxImageWidth,
+    );
     final transformer = MimeMessageTransformer(transformConfiguration);
     return transformer.toDocument(this);
   }
@@ -196,40 +226,48 @@ extension HtmlTransform on MimeMessage {
   /// Transforms this message to HTML code.
   ///
   /// Set [blockExternalImages] to `true` in case external images should be blocked.
+  /// Set [enableDarkMode] to `true` to enforce dark mode on devices with older browsers.
   /// Optionally specify the [maxImageWidth] to set the maximum width for embedded images.
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
   /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
   String transformToHtml({
     bool? blockExternalImages,
+    bool? enableDarkMode,
     int? maxImageWidth,
     String? emptyMessageText,
     TransformConfiguration? transformConfiguration,
   }) {
     final document = transformToDocument(
-        blockExternalImages: blockExternalImages,
-        maxImageWidth: maxImageWidth,
-        emptyMessageText: emptyMessageText,
-        transformConfiguration: transformConfiguration);
+      blockExternalImages: blockExternalImages,
+      enableDarkMode: enableDarkMode,
+      maxImageWidth: maxImageWidth,
+      emptyMessageText: emptyMessageText,
+      transformConfiguration: transformConfiguration,
+    );
     return document.outerHtml;
   }
 
   /// Transforms this message to the innter BODY HTML code.
   ///
   /// Set [blockExternalImages] to `true` in case external images should be blocked.
+  /// Set [enableDarkMode] to `true` to enforce dark mode on devices with older browsers.
   /// Optionally specify the [maxImageWidth] to set the maximum width for embedded images.
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
   /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
   String transformToBodyInnerHtml({
     bool? blockExternalImages,
+    bool? enableDarkMode,
     int? maxImageWidth,
     String? emptyMessageText,
     TransformConfiguration? transformConfiguration,
   }) {
     final document = transformToDocument(
-        blockExternalImages: blockExternalImages,
-        maxImageWidth: maxImageWidth,
-        emptyMessageText: emptyMessageText,
-        transformConfiguration: transformConfiguration);
+      blockExternalImages: blockExternalImages,
+      enableDarkMode: enableDarkMode,
+      maxImageWidth: maxImageWidth,
+      emptyMessageText: emptyMessageText,
+      transformConfiguration: transformConfiguration,
+    );
     return document.body!.innerHtml;
   }
 
@@ -237,12 +275,14 @@ extension HtmlTransform on MimeMessage {
   ///
   /// Optionally specify the [quoteHeaderTemplate], defaults to `MailConventions.defaultReplyHeaderTemplate`, for forwarding you can use the `MailConventions.defaultForwardHeaderTemplate`.
   /// Set [blockExternalImages] to `true` in case external images should be blocked.
+  /// Set [enableDarkMode] to `true` to enforce dark mode on devices with older browsers.
   /// Optionally specify the [maxImageWidth] to set the maximum width for embedded images.
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
   /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
   String quoteToHtml({
     String? quoteHeaderTemplate,
     bool? blockExternalImages,
+    bool? enableDarkMode,
     int? maxImageWidth,
     String? emptyMessageText,
     TransformConfiguration? transformConfiguration,
@@ -255,10 +295,12 @@ extension HtmlTransform on MimeMessage {
         .replaceAll('"', '&quot;')
         .replaceAll('\r\n', '<br/>');
     final document = transformToDocument(
-        blockExternalImages: blockExternalImages,
-        maxImageWidth: maxImageWidth,
-        emptyMessageText: emptyMessageText,
-        transformConfiguration: transformConfiguration);
+      blockExternalImages: blockExternalImages,
+      enableDarkMode: enableDarkMode,
+      maxImageWidth: maxImageWidth,
+      emptyMessageText: emptyMessageText,
+      transformConfiguration: transformConfiguration,
+    );
     return '<p><br/></p><blockquote>$quoteHeader<br/>${document.body!.innerHtml}</blockquote>';
   }
 }

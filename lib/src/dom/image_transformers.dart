@@ -5,7 +5,7 @@ import 'package:image/image.dart' as img;
 import 'package:html/dom.dart';
 import 'package:enough_mail/mime.dart';
 
-class ImageTransformer implements DomTransformer {
+class ImageTransformer extends DomTransformer {
   const ImageTransformer();
   @override
   void process(Document document, MimeMessage message,
