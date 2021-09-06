@@ -2,6 +2,7 @@ import 'package:enough_mail/src/mime_message.dart';
 import 'package:enough_mail_html/src/enough_mail_html_base.dart';
 import 'package:html/dom.dart';
 
+/// Forces dark mode also for older browsers
 class DarkModeTransformer extends DomTransformer {
   const DarkModeTransformer();
 
@@ -10,7 +11,8 @@ class DarkModeTransformer extends DomTransformer {
       TransformConfiguration configuration) {
     if (configuration.enableDarkMode) {
       ensureDocumentHeadIsAvailable(document);
-      final style = Element.html('<style>body {color: #FFFFFF;}</style>');
+      final style = Element.html(
+          '<style type="text/css">body {color: #FFFFFF; margin: 4px;}</style>');
       document.head!.append(style);
     }
   }
