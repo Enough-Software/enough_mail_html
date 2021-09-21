@@ -4,12 +4,15 @@ class HtmlToPlainTextConverter {
   static final _htmlTagRegex =
       RegExp(r'<[^>]*>', multiLine: true, caseSensitive: true);
 
+  static final _lineBreakOrWhiteSpaceRegex =
+      RegExp(r'([\r\n]|[\n]|s)*', multiLine: true, caseSensitive: true);
+
   // disallow instantiation:
   HtmlToPlainTextConverter._();
 
   /// Converts the given [htmlText] into plain text.
   ///
-  /// - It keeps code untouched in the <pre> elements
+  /// - It keeps code untouched in the `<pre>` elements
   /// - Blockquotes are transformed into lines starting with `>`
   /// - HTML entities are transformed to their plain text representation
   static String convert(final String htmlText) {
@@ -19,8 +22,9 @@ class HtmlToPlainTextConverter {
     for (var i = 0; i < matches.length; i++) {
       var match = matches[i];
       if (match.start > lastMatchIndex) {
-        writeConvertHtmlEntities(
-            htmlText.substring(lastMatchIndex, match.start), plainTextBuffer);
+        final textBetweenMatches =
+            htmlText.substring(lastMatchIndex, match.start);
+        writeConvertHtmlEntities(textBetweenMatches, plainTextBuffer);
       }
       final tag = match.group(0)!.toLowerCase();
       if (tag.startsWith('<pre')) {
@@ -46,7 +50,10 @@ class HtmlToPlainTextConverter {
       writeConvertHtmlEntities(
           htmlText.substring(lastMatchIndex), plainTextBuffer);
     }
-    final plainText = plainTextBuffer.toString();
+    // remove line-breaks and whitespace at start:
+    final plainText = plainTextBuffer
+        .toString()
+        .replaceFirst(_lineBreakOrWhiteSpaceRegex, '');
     return plainText;
   }
 

@@ -1,3 +1,4 @@
+import 'package:enough_mail_html/enough_mail_html.dart';
 import 'package:enough_mail_html/src/dom/dark_mode_transformer.dart';
 import 'package:enough_mail_html/src/text/convert_tags_text_transformer.dart';
 import 'package:enough_mail_html/src/text/linebreak_text_transformer.dart';
@@ -14,6 +15,9 @@ import 'package:html/dom.dart';
 
 /// Contains the configuration for all transformations.
 class TransformConfiguration {
+  /// Should the plain text be used instead of the HTML text?
+  final bool preferPlainText;
+
   /// Should external images be blocked?
   final bool blockExternalImages;
 
@@ -45,6 +49,7 @@ class TransformConfiguration {
   /// Compare [create] to have an easier to use building function
   const TransformConfiguration(
     this.blockExternalImages,
+    this.preferPlainText,
     this.enableDarkMode,
     this.emptyMessageText,
     this.maxImageWidth,
@@ -57,6 +62,7 @@ class TransformConfiguration {
   /// Provides easy access to a standard configuation that does not block external images.
   static const TransformConfiguration standardConfiguration =
       TransformConfiguration(
+    false,
     false,
     false,
     standardEmptyMessageText,
@@ -73,6 +79,7 @@ class TransformConfiguration {
   static TransformConfiguration create({
     bool? blockExternalImages,
     bool? enableDarkMode,
+    bool? preferPlainText,
     String? emptyMessageText,
     int? maxImageWidth,
     String? plainTextHtmlTemplate,
@@ -89,6 +96,7 @@ class TransformConfiguration {
     maxImageWidth ??= standardMaxImageWidth;
     return TransformConfiguration(
       blockExternalImages ?? false,
+      preferPlainText ?? false,
       enableDarkMode ?? false,
       emptyMessageText ?? standardEmptyMessageText,
       maxImageWidth,
@@ -137,7 +145,9 @@ abstract class DomTransformer {
   }
 }
 
+/// Transforms MIME messages
 class MimeMessageTransformer {
+  /// The configuration used for the transformation
   final TransformConfiguration configuration;
 
   MimeMessageTransformer(this.configuration);
@@ -156,9 +166,19 @@ class MimeMessageTransformer {
   }
 
   Document toDocument(MimeMessage message) {
-    var html = message.decodeTextHtmlPart();
+    var html =
+        configuration.preferPlainText ? null : message.decodeTextHtmlPart();
     if (html == null) {
       var textPart = message.decodeTextPlainPart();
+      if (textPart == null && configuration.preferPlainText) {
+        textPart = message.decodeTextHtmlPart();
+        if (textPart != null) {
+          textPart = Document.html(textPart).body?.innerHtml;
+          if (textPart != null) {
+            textPart = HtmlToPlainTextConverter.convert(textPart);
+          }
+        }
+      }
       if (textPart == null) {
         if (message.hasInlineParts()) {
           textPart = '';
@@ -202,12 +222,14 @@ extension HtmlTransform on MimeMessage {
   /// Transforms this message to Document.
   ///
   /// Set [blockExternalImages] to `true` in case external images should be blocked.
+  /// Set [preferPlainText] to `true` to use plain text instead of the HTML text.
   /// Set [enableDarkMode] to `true` to enforce dark mode on devices with older browsers.
   /// Optionally specify the [maxImageWidth] to set the maximum width for embedded images.
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
   /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
   Document transformToDocument({
     bool? blockExternalImages,
+    bool? preferPlainText,
     bool? enableDarkMode,
     int? maxImageWidth,
     String? emptyMessageText,
@@ -215,6 +237,7 @@ extension HtmlTransform on MimeMessage {
   }) {
     transformConfiguration ??= TransformConfiguration.create(
       blockExternalImages: blockExternalImages,
+      preferPlainText: preferPlainText,
       enableDarkMode: enableDarkMode,
       emptyMessageText: emptyMessageText,
       maxImageWidth: maxImageWidth,
@@ -226,12 +249,14 @@ extension HtmlTransform on MimeMessage {
   /// Transforms this message to HTML code.
   ///
   /// Set [blockExternalImages] to `true` in case external images should be blocked.
+  /// Set [preferPlainText] to `true` to use plain text instead of the HTML text.
   /// Set [enableDarkMode] to `true` to enforce dark mode on devices with older browsers.
   /// Optionally specify the [maxImageWidth] to set the maximum width for embedded images.
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
   /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
   String transformToHtml({
     bool? blockExternalImages,
+    bool? preferPlainText,
     bool? enableDarkMode,
     int? maxImageWidth,
     String? emptyMessageText,
@@ -239,6 +264,7 @@ extension HtmlTransform on MimeMessage {
   }) {
     final document = transformToDocument(
       blockExternalImages: blockExternalImages,
+      preferPlainText: preferPlainText,
       enableDarkMode: enableDarkMode,
       maxImageWidth: maxImageWidth,
       emptyMessageText: emptyMessageText,
@@ -250,12 +276,14 @@ extension HtmlTransform on MimeMessage {
   /// Transforms this message to the innter BODY HTML code.
   ///
   /// Set [blockExternalImages] to `true` in case external images should be blocked.
+  /// Set [preferPlainText] to `true` to use plain text instead of the HTML text.
   /// Set [enableDarkMode] to `true` to enforce dark mode on devices with older browsers.
   /// Optionally specify the [maxImageWidth] to set the maximum width for embedded images.
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
   /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
   String transformToBodyInnerHtml({
     bool? blockExternalImages,
+    bool? preferPlainText,
     bool? enableDarkMode,
     int? maxImageWidth,
     String? emptyMessageText,
@@ -263,6 +291,7 @@ extension HtmlTransform on MimeMessage {
   }) {
     final document = transformToDocument(
       blockExternalImages: blockExternalImages,
+      preferPlainText: preferPlainText,
       enableDarkMode: enableDarkMode,
       maxImageWidth: maxImageWidth,
       emptyMessageText: emptyMessageText,
@@ -275,12 +304,14 @@ extension HtmlTransform on MimeMessage {
   ///
   /// Optionally specify the [quoteHeaderTemplate], defaults to `MailConventions.defaultReplyHeaderTemplate`, for forwarding you can use the `MailConventions.defaultForwardHeaderTemplate`.
   /// Set [blockExternalImages] to `true` in case external images should be blocked.
+  /// Set [preferPlainText] to `true` to use plain text instead of the HTML text.
   /// Set [enableDarkMode] to `true` to enforce dark mode on devices with older browsers.
   /// Optionally specify the [maxImageWidth] to set the maximum width for embedded images.
   /// Optionally specify the [emptyMessageText] for messages that contain no other content.
   /// Optionally specify the [transformConfiguration] to control all aspects of the transformation - in that case other parameters are ignored.
   String quoteToHtml({
     String? quoteHeaderTemplate,
+    bool? preferPlainText,
     bool? blockExternalImages,
     bool? enableDarkMode,
     int? maxImageWidth,
@@ -296,6 +327,7 @@ extension HtmlTransform on MimeMessage {
         .replaceAll('\r\n', '<br/>');
     final document = transformToDocument(
       blockExternalImages: blockExternalImages,
+      preferPlainText: preferPlainText,
       enableDarkMode: enableDarkMode,
       maxImageWidth: maxImageWidth,
       emptyMessageText: emptyMessageText,
