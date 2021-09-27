@@ -19,6 +19,7 @@ class HtmlToPlainTextConverter {
     final matches = _htmlTagRegex.allMatches(htmlText).toList();
     final plainTextBuffer = StringBuffer();
     var lastMatchIndex = 0;
+    var blockquoteCounter = 0;
     for (var i = 0; i < matches.length; i++) {
       var match = matches[i];
       if (match.start > lastMatchIndex) {
@@ -43,6 +44,14 @@ class HtmlToPlainTextConverter {
         }
       } else if (tag.startsWith('<blockquote')) {
         plainTextBuffer.write('>');
+        blockquoteCounter++;
+      } else if (tag.startsWith('</blockquote')) {
+        blockquoteCounter--;
+      } else if (tag.startsWith('<p') || tag.startsWith('<br')) {
+        plainTextBuffer.write('\n');
+        for (var q = 0; q < blockquoteCounter; q++) {
+          plainTextBuffer.write('>');
+        }
       }
       lastMatchIndex = match.end;
     }
