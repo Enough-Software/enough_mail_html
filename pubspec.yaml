@@ -15,8 +15,8 @@ dependencies:
 
 dependency_overrides:
   # outcomment for local development
-  enough_mail:
-    path: ../enough_mail/
+  # enough_mail:
+  #   path: ../enough_mail/
 
 dev_dependencies:
   lints: ^1.0.1
