@@ -6,8 +6,8 @@ import 'package:test/test.dart';
 void main() {
   group('Test linebreaks', () {
     test('linebreaks', () {
-      final input = 'hello\r\nworld.\n';
-      final transformer = LineBreakTextTransformer();
+      const input = 'hello\r\nworld.\n';
+      const transformer = LineBreakTextTransformer();
       expect(
           transformer.transform(input, MimeMessage(),
               TransformConfiguration.standardConfiguration),

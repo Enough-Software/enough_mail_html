@@ -1,15 +1,20 @@
 import 'package:enough_mail/mime.dart';
-import 'package:enough_mail_html/enough_mail_html.dart';
-import 'package:enough_mail_html/src/dom/image_transformers.dart';
 
+import '../dom/image_transformers.dart';
+import '../enough_mail_html_base.dart';
 import 'text_search.dart';
 
+/// Detects mentions of CID references in texts and includes matching images
 class MergeAttachedImageTextTransformer extends TextTransformer {
+  /// Create a new image transformer
   const MergeAttachedImageTextTransformer();
 
   @override
   String transform(
-      String text, MimeMessage message, TransformConfiguration configuration) {
+    String text,
+    MimeMessage message,
+    TransformConfiguration configuration,
+  ) {
     final search = TextSearchIterator('[cid:', text, endSearchPattern: ']');
     String? nextImageDefinition;
     while ((nextImageDefinition = search.next()) != null) {
@@ -25,6 +30,7 @@ class MergeAttachedImageTextTransformer extends TextTransformer {
         final data =
             ImageTransformer.toImageData(part, mediaType, configuration);
         final linkCid = Uri.encodeComponent(cid.substring(1, cid.length - 1));
+        // ignore: parameter_assignments
         text = text.replaceFirst(nextImageDefinition,
             '<a href="cid://$linkCid"><img src="$data" alt="${part.getHeaderContentDisposition()?.filename}"/></a>');
       }

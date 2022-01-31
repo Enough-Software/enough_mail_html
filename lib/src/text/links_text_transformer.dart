@@ -2,13 +2,19 @@ import 'package:enough_mail/mime.dart';
 
 import '../enough_mail_html_base.dart';
 
+/// Detects URLs in texts and links them
 class LinksTextTransformer extends TextTransformer {
+  /// Creates a new link transformer
+  const LinksTextTransformer();
+
+  /// A regex for detecting schemes such as `https://` or `sftp://`.
   static final RegExp schemeRegEx = RegExp(r'[a-z]{3,6}://');
-  // not a perfect but good enough regular expression to match URLs in text. It also matches a space at the beginning and a dot at the end,
-  // so this is filtered out manually in the found matches
+
+  /// not a perfect but good enough regular expression to match URLs in text.
+  // /It also matches a space at the beginning and a dot at the end,
+  /// so this is filtered out manually in the found matches
   static final RegExp linkRegEx = RegExp(
       r'(([a-z]{3,6}:\/\/)|(^|\s))([a-zA-Z0-9\-]+\.)+[a-z]{2,13}([\?\/]+[\.\?\=\&\%\/\w\+\-]*)?');
-  const LinksTextTransformer();
 
   @override
   String transform(
@@ -35,7 +41,11 @@ class LinksTextTransformer extends TextTransformer {
       if (!group.startsWith(schemeRegEx)) {
         buffer.write('https://');
       }
-      buffer..write(urlText)..write('">')..write(urlText)..write('</a>');
+      buffer
+        ..write(urlText)
+        ..write('">')
+        ..write(urlText)
+        ..write('</a>');
       end = endsWithDot ? match.end - 1 : match.end;
     }
     if (end < text.length) {

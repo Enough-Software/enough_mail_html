@@ -2,20 +2,17 @@ import 'package:enough_mail/enough_mail.dart';
 import 'package:enough_mail_html/enough_mail_html.dart';
 import 'package:html/dom.dart';
 
-String simpleTransformExample(MimeMessage mimeMessage) {
-  return mimeMessage.transformToHtml();
-}
+String simpleTransformExample(MimeMessage mimeMessage) =>
+    mimeMessage.transformToHtml();
 
-String generatePlainText(String htmlText) {
-  return HtmlToPlainTextConverter.convert(htmlText);
-}
+String generatePlainText(String htmlText) =>
+    HtmlToPlainTextConverter.convert(htmlText);
 
-String configureImageBlockingOrEmptyMessage(MimeMessage mimeMessage) {
-  return mimeMessage.transformToHtml(
-      blockExternalImages: true, emptyMessageText: 'Nothing here, move on!');
-}
+String configureImageBlockingOrEmptyMessage(MimeMessage mimeMessage) =>
+    mimeMessage.transformToHtml(
+        blockExternalImages: true, emptyMessageText: 'Nothing here, move on!');
 
-String playYourself(MimeMessage mimeMessage) {
+Future<String> playYourself(MimeMessage mimeMessage) async {
   final cfg = TransformConfiguration.create(
       blockExternalImages: true,
       emptyMessageText: 'Nothing here, move on!',

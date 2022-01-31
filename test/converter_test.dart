@@ -4,31 +4,31 @@ import 'package:test/test.dart';
 void main() {
   group('Test plain text conversion', () {
     test('short', () {
-      final html = '<p>Hello World</p>';
+      const html = '<p>Hello World</p>';
       expect(HtmlToPlainTextConverter.convert(html), 'Hello World');
     });
 
     test('shortWithAppendedText', () {
-      final html = '<p>Hello World.</p> Here is some more.';
+      const html = '<p>Hello World.</p> Here is some more.';
       expect(HtmlToPlainTextConverter.convert(html),
           'Hello World. Here is some more.');
     });
 
     test('shortWithPrependedText', () {
-      final html = 'Here is some more. <p>Hello World.</p>';
+      const html = 'Here is some more. <p>Hello World.</p>';
       expect(HtmlToPlainTextConverter.convert(html),
           'Here is some more. \nHello World.');
     });
 
     test('shortWithAppendedAndPrependedText', () {
-      final html =
+      const html =
           'Here is some more1. <p>Hello World.</p> Here is some more2.';
       expect(HtmlToPlainTextConverter.convert(html),
           'Here is some more1. \nHello World. Here is some more2.');
     });
 
     test('long', () {
-      final html = '''<p>Hello World</p>
+      const html = '''<p>Hello World</p>
 <p><div style="font-weight: bold;">This</div> is a message.</p>
 <blockquote><p>quoted text!</p></blockquote>''';
       expect(HtmlToPlainTextConverter.convert(html), '''Hello World\n
@@ -38,7 +38,7 @@ This is a message.
     });
 
     test('with pre', () {
-      final html = '''<p>Hello World</p>
+      const html = '''<p>Hello World</p>
 <p><div style="font-weight: bold;">This</div> is a message.</p>
 <blockquote><p>quoted text!</p></blockquote>
 <pre>
@@ -57,7 +57,7 @@ This is a message.
     });
 
     test('with html entities', () {
-      final html = '''<p>Hello &amp; World&#128540;</p>
+      const html = '''<p>Hello &amp; World&#128540;</p>
 <p><div style="font-weight: bold;">This</div> is a &phi; message&#169;&#x00A9;&#xA9;.</p>
 <blockquote><p>quoted text!</p></blockquote>''';
       expect(HtmlToPlainTextConverter.convert(html), '''Hello & World😜
@@ -68,7 +68,7 @@ This is a φ message©©©.
     });
 
     test('with html entities and <pre>', () {
-      final html = '''<p>Hello &amp; World&#128540;</p>
+      const html = '''<p>Hello &amp; World&#128540;</p>
 <p><div style="font-weight: bold;">This</div> is a &phi; message&#169;&#x00A9;&#xA9;.</p>
 <pre>
 <p>This html &amp; should be</p>
@@ -87,7 +87,7 @@ This is a φ message©©©.
     });
 
     test('with line breaks', () {
-      final html =
+      const html =
           '''<p>&nbsp;Hello my friend<br><br>How are you doing today?<br><br>I wonder <span style="font-weight: bold;">what</span> happened<br><br></p><p>---<br>Sent with Maily</p>''';
       expect(HtmlToPlainTextConverter.convert(html), ''' Hello my friend
 

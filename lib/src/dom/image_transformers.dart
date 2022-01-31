@@ -1,12 +1,17 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import '../enough_mail_html_base.dart';
-import 'package:image/image.dart' as img;
-import 'package:html/dom.dart';
-import 'package:enough_mail/mime.dart';
 
+import 'package:enough_mail/mime.dart';
+import 'package:html/dom.dart';
+import 'package:image/image.dart' as img;
+
+import '../enough_mail_html_base.dart';
+
+/// Resolves nested images
 class ImageTransformer extends DomTransformer {
+  /// Creates a new image transformer
   const ImageTransformer();
+
   @override
   void process(Document document, MimeMessage message,
       TransformConfiguration configuration) {
@@ -48,8 +53,8 @@ class ImageTransformer extends DomTransformer {
             if (imageElement.parent?.localName != 'a') {
               final linkCid =
                   Uri.encodeComponent(cid.substring(1, cid.length - 1));
-              var anchor = Element.html('<a href="cid://$linkCid"></a>');
-              anchor.append(Element.html(imageElement.outerHtml));
+              final anchor = Element.html('<a href="cid://$linkCid"></a>')
+                ..append(Element.html(imageElement.outerHtml));
               imageElement.replaceWith(anchor);
             }
           }
@@ -69,7 +74,8 @@ class ImageTransformer extends DomTransformer {
         message.findContentInfo(disposition: ContentDisposition.inline);
 
     for (final info in inlineInfos) {
-      //TODO inline elements should be added at their respective positions and not necessary below the text
+      //TODO inline elements should be added at their respective positions
+      //and not necessary below the text
       if (info.isImage) {
         final cid = info.cid;
         if (cid == null || !usedContentIds.contains(cid)) {
@@ -85,8 +91,12 @@ class ImageTransformer extends DomTransformer {
     }
   }
 
-  static String toImageData(MimePart part, MediaType? mediaType,
-      TransformConfiguration configuration) {
+  /// Converts the media in the given mime [part] into a base-64 representation
+  static String toImageData(
+    MimePart part,
+    MediaType? mediaType,
+    TransformConfiguration configuration,
+  ) {
     var binary = part.decodeContentBinary()!;
     var mediaTypeText = mediaType?.text ?? 'image/png';
     if (configuration.maxImageWidth != null && binary.length > 64 * 1024) {

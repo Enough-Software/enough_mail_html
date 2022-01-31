@@ -1,14 +1,13 @@
-import 'package:enough_mail_html/enough_mail_html.dart';
-import 'package:html/parser.dart' show parse;
 import 'package:html/dom.dart';
+import 'package:html/parser.dart' show parse;
 import 'package:test/test.dart';
 
 void main() {
-  group('A group of tests', () {
+  group('DOM', () {
     setUp(() {});
 
-    test('First Test', () {
-      final html = '''
+    test('Parse and adapt documents', () {
+      const html = '''
 <html>
 <body>
   <p>hello world</p>
@@ -30,8 +29,8 @@ void main() {
           'https://someprovider.com/somefolder/name.png');
       expect(document.getElementsByTagName('xxxx'), isEmpty);
 
-      final meta = Element.html(
-          '<meta name="viewport" content="width=device-width, initial-scale=1.0">');
+      final meta = Element.html('<meta name="viewport" '
+          'content="width=device-width, initial-scale=1.0">');
       document.head!.append(meta);
       final imageElements = document.getElementsByTagName('img');
       for (final imageElement in imageElements) {
@@ -42,10 +41,10 @@ void main() {
           }
         }
       }
-      print(document.outerHtml);
+      //print(document.outerHtml);
 
       final doc = parse('<p>hello world</p>');
-      print(doc.outerHtml);
+      // print(doc.outerHtml);
     });
   });
 }

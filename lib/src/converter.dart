@@ -1,14 +1,14 @@
 /// Converts HTML text into a plain text message.
 class HtmlToPlainTextConverter {
+  // disallow instantiation:
+  HtmlToPlainTextConverter._();
+
   static final _htmlEntityRegex = RegExp(r'&(#?)([a-zA-Z0-9]+?);');
   static final _htmlTagRegex =
       RegExp(r'<[^>]*>', multiLine: true, caseSensitive: true);
 
   static final _lineBreakOrWhiteSpaceRegex =
       RegExp(r'([\r\n]|[\n]|s)*', multiLine: true, caseSensitive: true);
-
-  // disallow instantiation:
-  HtmlToPlainTextConverter._();
 
   /// Converts the given [htmlText] into plain text.
   ///
@@ -73,7 +73,8 @@ class HtmlToPlainTextConverter {
     return buffer.toString();
   }
 
-  /// Writes the HTML entities such as `&amp;` from the [input] into the [target] [StringBuffer].
+  /// Writes the HTML entities such as `&amp;`
+  /// from the [input] into the [target] StringBuffer.
   static void writeConvertHtmlEntities(String input, StringBuffer target) {
     final matches = _htmlEntityRegex.allMatches(input);
     var lastStartIndex = 0;

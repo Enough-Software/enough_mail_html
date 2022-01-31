@@ -1,13 +1,31 @@
+/// Iterates through texts
 class TextSearchIterator {
+  /// Create a new text search iterator
+  TextSearchIterator(
+    this.searchPattern,
+    this.text, {
+    this.endSearchPattern,
+    this.endSearchPatternCanBeEndOfText = false,
+  });
+
   int _searchIndex = 0;
+
+  /// What to search for
   final String searchPattern;
+
+  /// The text that should be searched in
   final String text;
+
+  /// The optional end search text
+  ///
+  /// Compare [endSearchPatternCanBeEndOfText]
   final String? endSearchPattern;
+
+  /// Defines if instead of the [endSearchPattern] also the end of the text
+  /// is a valid stop.
   final bool endSearchPatternCanBeEndOfText;
 
-  TextSearchIterator(this.searchPattern, this.text,
-      {this.endSearchPattern, this.endSearchPatternCanBeEndOfText = false});
-
+  /// Retrieves the next match
   String? next() {
     if (_searchIndex == -1) {
       return null;
@@ -17,8 +35,9 @@ class TextSearchIterator {
       _searchIndex = -1;
       return null;
     }
+    final endSearchPattern = this.endSearchPattern;
     if (endSearchPattern != null) {
-      final endIndex = text.indexOf(endSearchPattern!, nextIndex + 1);
+      final endIndex = text.indexOf(endSearchPattern, nextIndex + 1);
       if (endIndex == -1) {
         _searchIndex = -1;
         if (endSearchPatternCanBeEndOfText) {
@@ -35,16 +54,34 @@ class TextSearchIterator {
   }
 }
 
+/// Like a [TextSearchIterator] with more options for ending a search.
 class FlexibleEndTextSearchIterator {
+  /// Creates a new flexible text search
+  FlexibleEndTextSearchIterator(
+    this.searchPattern,
+    this.text, {
+    this.endSearchPatterns,
+    this.endSearchPatternCanBeEndOfText = false,
+  });
+
   int _searchIndex = 0;
+
+  /// What to search for
   final String searchPattern;
+
+  /// The text that should be searched in
   final String text;
+
+  /// The optional end search text
+  ///
+  /// Compare [endSearchPatternCanBeEndOfText]
   final List<String>? endSearchPatterns;
+
+  /// Defines if instead of the [endSearchPatterns] also the end of the text
+  /// is a valid stop.
   final bool endSearchPatternCanBeEndOfText;
 
-  FlexibleEndTextSearchIterator(this.searchPattern, this.text,
-      {this.endSearchPatterns, this.endSearchPatternCanBeEndOfText = false});
-
+  /// Retrieves the next matching text
   String? next() {
     if (_searchIndex == -1) {
       return null;

@@ -1,9 +1,11 @@
-import 'package:enough_mail/src/mime_message.dart';
-import 'package:enough_mail_html/src/enough_mail_html_base.dart';
+import 'package:enough_mail/mime.dart';
 import 'package:html/dom.dart';
+
+import '../enough_mail_html_base.dart';
 
 /// Forces dark mode also for older browsers
 class DarkModeTransformer extends DomTransformer {
+  /// Create a new dark mode transformer
   const DarkModeTransformer();
 
   @override

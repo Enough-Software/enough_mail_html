@@ -1,12 +1,14 @@
 import 'package:enough_mail/mime.dart';
-import 'package:enough_mail_html/enough_mail_html.dart';
 
+import '../enough_mail_html_base.dart';
+
+/// Comverts HTML tags in text messsages
 class ConvertTagsTextTransformer implements TextTransformer {
+  /// Creates a new tag transformer
   const ConvertTagsTextTransformer();
 
   @override
-  String transform(
-      String text, MimeMessage message, TransformConfiguration configuration) {
-    return text.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
-  }
+  String transform(String text, MimeMessage message,
+          TransformConfiguration configuration) =>
+      text.replaceAll('<', '&lt;').replaceAll('>', '&gt;');
 }
