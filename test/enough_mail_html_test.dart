@@ -7,7 +7,8 @@ void main() {
     setUp(() {});
 
     test('Parse and adapt documents', () {
-      const html = '''
+      const html =
+          '''
 <html>
 <body>
   <p>hello world</p>

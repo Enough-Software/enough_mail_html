@@ -92,14 +92,14 @@ class TransformConfiguration {
   /// The list of DOM transformers being used
   final List<DomTransformer> domTransformers;
 
-  /// The list of text transfomers that are used
+  /// The list of text transformers that are used
   /// before a plain text message without HTML part is converted into HTML
   final List<TextTransformer> textTransformers;
 
   /// Optional custom values, `null` unless specified.
   final Map<String, dynamic>? customValues;
 
-  /// Provides easy access to a standard configuation
+  /// Provides easy access to a standard configuration
   /// that does not block external images.
   static const TransformConfiguration standardConfiguration =
       TransformConfiguration(
@@ -154,7 +154,7 @@ abstract class DomTransformer {
 
   /// Transforms the [document] of the [message] using [configuration].
   ///
-  /// All changes will be visible to subsequenc transformers.
+  /// All changes will be visible to subsequent transformers.
   void process(Document document, MimeMessage message,
       TransformConfiguration configuration);
 
@@ -237,7 +237,7 @@ class MimeMessageTransformer {
 
 /// Transforms plain text messages.
 abstract class TextTransformer {
-  /// Createsa new text transformer
+  /// Creates a new text transformer
   const TextTransformer();
 
   /// Transforms the given [text] of the [message] using the [configuration ]
@@ -323,7 +323,7 @@ extension HtmlTransform on MimeMessage {
     return document.outerHtml;
   }
 
-  /// Transforms this message to the innter BODY HTML code.
+  /// Transforms this message to the inner BODY HTML code.
   ///
   /// Set [blockExternalImages] to `true` in case external images should
   /// be blocked.
