@@ -15,6 +15,8 @@ class ViewPortTransformer extends DomTransformer {
       Element.html('<meta name="viewport" content="$_viewPortContent">');
   static final Element _contentTypeMetaElement = Element.html(
       '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">');
+  static final Element _wordWrapStyleElement =
+      Element.html('<style type="text/css">* {word-wrap: break-word;}</style>');
 
   @override
   void process(Document document, MimeMessage message,
@@ -38,11 +40,13 @@ class ViewPortTransformer extends DomTransformer {
     }
     if (contentTypeNeedsToBeAdded) {
       ensureDocumentHeadIsAvailable(document);
-      document.head!.append(_contentTypeMetaElement);
+      document.head?.append(_contentTypeMetaElement);
     }
     if (viewportNeedsToBeAdded) {
       ensureDocumentHeadIsAvailable(document);
-      document.head!.append(_viewPortMetaElement);
+      document.head?.append(_viewPortMetaElement);
     }
+    // ensure long words like URLs are wrapped if necessary:
+    document.head?.append(_wordWrapStyleElement);
   }
 }
