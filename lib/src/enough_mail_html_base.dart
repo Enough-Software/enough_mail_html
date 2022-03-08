@@ -118,7 +118,12 @@ class TransformConfiguration {
 
   /// Embeds the plain text in a paragraph
   /// `<p>{text}</p>`
-  static const String standardPlainTextHtmlTemplate = '<p>{text}</p>';
+  static const String standardPlainTextHtmlTemplate = '<html><head>'
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=5.0, minimum-scale=0.5"</meta>'
+      '<style> * {word-wrap: break-word;}</style>'
+      '</head><body>'
+      '<p>{text}</p>'
+      '</body></html>';
 
   /// Default (English) empty message text
   static const String standardEmptyMessageText =
@@ -353,7 +358,7 @@ extension HtmlTransform on MimeMessage {
       emptyMessageText: emptyMessageText,
       transformConfiguration: transformConfiguration,
     );
-    return document.body!.innerHtml;
+    return document.body?.innerHtml ?? '';
   }
 
   /// Quotes the body of this message for editing HTML.
@@ -403,6 +408,6 @@ extension HtmlTransform on MimeMessage {
       emptyMessageText: emptyMessageText,
       transformConfiguration: transformConfiguration,
     );
-    return '<p><br/></p><blockquote>$quoteHeader<br/>${document.body!.innerHtml}</blockquote>';
+    return '<p><br/></p><blockquote>$quoteHeader<br/>${document.body?.innerHtml}</blockquote>';
   }
 }
