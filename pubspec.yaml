@@ -1,23 +1,24 @@
 name: enough_mail_html
 description: Generate HTML from an email mime message and creates plain text from HTML. Eases handling of `MimeMessage` in the `enough_mail` package.
-version: 1.3.0
+version: 2.0.0
 homepage: https://github.com/Enough-Software/enough_mail_html
 
 environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  enough_mail: # ^1.3.6
-    git:
-      url: https://github.com/Enough-Software/enough_mail.git
+  enough_mail: ^2.0.0
   html: ^0.15.0
-  image: ^3.1.1
+  image: ^3.1.3
 
 dependency_overrides:
-  # outcomment for local development
+  xml: ^6.0.1
+  # out-comment for git or local development
   # enough_mail:
+  #   git:
+  #     url: https://github.com/Enough-Software/enough_mail.git
   #   path: ../enough_mail/
 
 dev_dependencies:
-  lints: ^1.0.1
+  lints: ^2.0.0
   test: ^1.16.7

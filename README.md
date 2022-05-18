@@ -17,7 +17,9 @@ import 'package:enough_mail_html/enough_mail_html.dart';
 
 String generateHtml(MimeMessage mimeMessage) {
   return mimeMessage.transformToHtml(
-        blockExternalImages: false, emptyMessageText: 'Nothing here, move on!');
+        blockExternalImages: false, 
+        emptyMessageText: 'Nothing here, move on!',
+  );
 }
 
 String generatePlainText(String htmlText) {
@@ -45,7 +47,8 @@ String playYourself(MimeMessage mimeMessage) {
       blockExternalImages: true,
       emptyMessageText: 'Nothing here, move on!',
       customDomTransformers: [StyleTextDomTransformer()],
-      customValues: {'textStyle': 'font-size:10px;font-family:verdana;'});
+      customValues: {'textStyle': 'font-size:10px;font-family:verdana;'},
+  );
   return mimeMessage.transformToHtml(transformConfiguration: cfg);
 }
 
@@ -63,14 +66,19 @@ class StyleTextDomTransformer extends DomTransformer {
 ```
 
 ## Installation
-Add this dependency your pubspec.yaml file:
+Add this dependency your `pubspec.yaml` file:
 
 ```
 dependencies:
-  enough_mail_html: ^1.3.0
+  enough_mail_html: ^2.0.0
 ```
 The latest version or `enough_mail_html` is [![enough_mail_html version](https://img.shields.io/pub/v/enough_mail_html.svg)](https://pub.dartlang.org/packages/enough_mail_html).
 
+Note: you might need to set a dependency override for the xml package:
+```
+dependency_overrides:
+  xml: ^6.0.1
+```
 
 ## Features and bugs
 

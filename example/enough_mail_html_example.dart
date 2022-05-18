@@ -10,14 +10,17 @@ String generatePlainText(String htmlText) =>
 
 String configureImageBlockingOrEmptyMessage(MimeMessage mimeMessage) =>
     mimeMessage.transformToHtml(
-        blockExternalImages: true, emptyMessageText: 'Nothing here, move on!');
+      blockExternalImages: true,
+      emptyMessageText: 'Nothing here, move on!',
+    );
 
 Future<String> playYourself(MimeMessage mimeMessage) async {
   final cfg = TransformConfiguration.create(
-      blockExternalImages: true,
-      emptyMessageText: 'Nothing here, move on!',
-      customDomTransformers: [StyleTextDomTransformer()],
-      customValues: {'textStyle': 'font-size:10px;font-family:verdana;'});
+    blockExternalImages: true,
+    emptyMessageText: 'Nothing here, move on!',
+    customDomTransformers: [StyleTextDomTransformer()],
+    customValues: {'textStyle': 'font-size:10px;font-family:verdana;'},
+  );
   return mimeMessage.transformToHtml(transformConfiguration: cfg);
 }
 

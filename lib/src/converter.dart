@@ -111,6 +111,7 @@ class HtmlToPlainTextConverter {
     }
   }
 
+  //cSpell:disable
   /// A map of all HTML 4.01 character entities
   /// and their corresponding characters.
   /// Taken from https://github.com/james-alex/html_character_entities/blob/master/lib/src/html_character_entities.dart

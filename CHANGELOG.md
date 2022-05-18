@@ -1,3 +1,11 @@
+## 2.0.0
+- New `preferPlainText` option to use the mime message's plain text instead of the html part when available.
+- Convert HTML line-breaks to plain text line-breaks when calling `HtmlToPlainTextConverter.convert(String html);` 
+- New `enableDarkMode` option to improve dark mode display for older browser engines
+- Ensure compatibility with enough_mail 2.0.0
+- Improve documentation
+
+
 ## 1.3.0
 - Do not include the `enough_mail` package automatically to keep documentation simpler
 
