@@ -20,6 +20,9 @@ class HtmlToPlainTextConverter {
     final plainTextBuffer = StringBuffer();
     var lastMatchIndex = 0;
     var blockquoteCounter = 0;
+    var orderedListItemIndex = 0;
+    var isInOrderedList = false;
+    var isInUnorderedList = false;
     for (var i = 0; i < matches.length; i++) {
       var match = matches[i];
       if (match.start > lastMatchIndex) {
@@ -35,7 +38,6 @@ class HtmlToPlainTextConverter {
           final inPreTag = inPreMatch.group(0)!.toLowerCase();
           if (inPreTag.startsWith('</pre')) {
             i = j;
-
             plainTextBuffer
                 .write(htmlText.substring(preContentStart, inPreMatch.start));
             match = inPreMatch;
@@ -51,6 +53,28 @@ class HtmlToPlainTextConverter {
         plainTextBuffer.write('\n');
         for (var q = 0; q < blockquoteCounter; q++) {
           plainTextBuffer.write('>');
+        }
+      } else if (tag.startsWith('<ul')) {
+        isInUnorderedList = true;
+      } else if (isInUnorderedList && tag.startsWith('</ul')) {
+        isInUnorderedList = false;
+        plainTextBuffer.write('\n');
+      } else if (tag.startsWith('<ol')) {
+        isInOrderedList = true;
+        orderedListItemIndex = 0;
+      } else if (isInOrderedList && tag.startsWith('</ol')) {
+        isInOrderedList = false;
+        plainTextBuffer.write('\n');
+      } else if (tag.startsWith('<li')) {
+        plainTextBuffer.write('\n');
+        if (isInUnorderedList) {
+          plainTextBuffer.write(' * ');
+        } else {
+          orderedListItemIndex++;
+          plainTextBuffer
+            ..write(' ')
+            ..write(orderedListItemIndex)
+            ..write('. ');
         }
       }
       lastMatchIndex = match.end;

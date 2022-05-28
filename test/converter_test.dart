@@ -99,5 +99,29 @@ I wonder what happened
 ---
 Sent with Maily''');
     });
+
+    test('with unordered list', () {
+      const html =
+          '''<p>Shopping list:</p><ul><li>Bread</li><li>Veggies</li></ul>''';
+      expect(HtmlToPlainTextConverter.convert(html), '''Shopping list:
+ * Bread
+ * Veggies
+''');
+    });
+
+    test('with ordered list', () {
+      const html =
+          '''<p>Shopping list:</p><ol><li>Ice cream</li><li>Oranges</li></ol><ul><li>Bread</li><li>Veggies</li></ul>Remember:<ol><li>Keep it simple</li><li>Be compassionate</li></ol>''';
+      expect(HtmlToPlainTextConverter.convert(html), '''Shopping list:
+ 1. Ice cream
+ 2. Oranges
+
+ * Bread
+ * Veggies
+Remember:
+ 1. Keep it simple
+ 2. Be compassionate
+''');
+    });
   });
 }
