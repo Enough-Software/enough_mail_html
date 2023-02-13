@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:enough_mail/mime.dart';
 import 'package:html/dom.dart';
@@ -104,7 +103,7 @@ class ImageTransformer extends DomTransformer {
       if (image.width > configuration.maxImageWidth!) {
         final resized =
             img.copyResize(image, width: configuration.maxImageWidth);
-        final reducedBinary = img.encodePng(resized) as Uint8List;
+        final reducedBinary = img.encodePng(resized);
         // print(
         //     'reduced from ${binary.length} to ${reducedBinary.length}  / ${reducedBinary.length / binary.length}');
         binary = reducedBinary;
