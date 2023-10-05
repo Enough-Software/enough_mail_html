@@ -9,10 +9,9 @@ environment:
 dependencies:
   enough_mail: ^2.0.0
   html: ^0.15.0
-  image: ^4.0.13
+  image: ^4.0.0
 
 dependency_overrides:
-  xml: ^6.0.1
   # out-comment for git or local development
   # enough_mail:
   #   git:

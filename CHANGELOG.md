@@ -1,3 +1,7 @@
+## 2.0.1
+- Update dependencies
+- Improve documentation
+
 ## 2.0.0
 - New `preferPlainText` option to use the mime message's plain text instead of the html part when available.
 - Convert HTML line-breaks to plain text line-breaks when calling `HtmlToPlainTextConverter.convert(String html);` 

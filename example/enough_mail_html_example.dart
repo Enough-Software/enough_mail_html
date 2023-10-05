@@ -30,7 +30,7 @@ class StyleTextDomTransformer extends DomTransformer {
       TransformConfiguration configuration) {
     final paragraphs = document.getElementsByTagName('p');
     for (final paragraph in paragraphs) {
-      paragraph.attributes['style'] = configuration.customValues!['textStyle'];
+      paragraph.attributes['style'] = configuration.customValues?['textStyle'];
     }
   }
 }
