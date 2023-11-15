@@ -12,8 +12,11 @@ class ImageTransformer extends DomTransformer {
   const ImageTransformer();
 
   @override
-  void process(Document document, MimeMessage message,
-      TransformConfiguration configuration) {
+  void process(
+    Document document,
+    MimeMessage message,
+    TransformConfiguration configuration,
+  ) {
     final imageElements = document.getElementsByTagName('img');
     final usedContentIds = <String>[];
     for (final imageElement in imageElements) {

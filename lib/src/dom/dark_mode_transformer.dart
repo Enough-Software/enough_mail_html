@@ -14,8 +14,9 @@ class DarkModeTransformer extends DomTransformer {
     if (configuration.enableDarkMode) {
       ensureDocumentHeadIsAvailable(document);
       final style = Element.html(
-          '<style type="text/css">body {color: #FFFFFF; margin: 4px;}</style>');
-      document.head!.append(style);
+        '<style type="text/css">body {color: #FFFFFF; margin: 4px;}</style>',
+      );
+      document.head?.append(style);
     }
   }
 }

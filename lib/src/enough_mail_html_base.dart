@@ -8,6 +8,7 @@ import 'dom/image_transformers.dart';
 import 'dom/link_transformers.dart';
 import 'dom/meta_transformers.dart';
 import 'dom/script_transformers.dart';
+import 'dom/width_transformers.dart';
 import 'text/convert_tags_text_transformer.dart';
 import 'text/linebreak_text_transformer.dart';
 import 'text/links_text_transformer.dart';
@@ -28,6 +29,7 @@ class TransformConfiguration {
     this.enableDarkMode = false,
     this.emptyMessageText = standardEmptyMessageText,
     this.plainTextHtmlTemplate = standardPlainTextHtmlTemplate,
+    this.attributeWidthMax = standardAttributeMaxWidth,
     this.customValues,
   });
 
@@ -44,6 +46,7 @@ class TransformConfiguration {
     String plainTextHtmlTemplate = standardPlainTextHtmlTemplate,
     List<DomTransformer>? customDomTransformers,
     List<TextTransformer>? customTextTransformers,
+    int attributeWidthMax = standardAttributeMaxWidth,
     Map<String, dynamic>? customValues,
   }) {
     final domTransformers = (customDomTransformers != null)
@@ -53,6 +56,7 @@ class TransformConfiguration {
         ? [...standardTextTransformers, ...customTextTransformers]
         : standardTextTransformers;
     maxImageWidth ??= standardMaxImageWidth;
+
     return TransformConfiguration(
       blockExternalImages: blockExternalImages,
       preferPlainText: preferPlainText,
@@ -62,6 +66,7 @@ class TransformConfiguration {
       domTransformers: domTransformers,
       textTransformers: textTransformers,
       plainTextHtmlTemplate: plainTextHtmlTemplate,
+      attributeWidthMax: attributeWidthMax,
       customValues: customValues,
     );
   }
@@ -96,6 +101,9 @@ class TransformConfiguration {
   /// before a plain text message without HTML part is converted into HTML
   final List<TextTransformer> textTransformers;
 
+  /// The maximum value for width attributes, defaults to 400.
+  final int attributeWidthMax;
+
   /// Optional custom values, `null` unless specified.
   final Map<String, dynamic>? customValues;
 
@@ -111,6 +119,7 @@ class TransformConfiguration {
     domTransformers: standardDomTransformers,
     textTransformers: standardTextTransformers,
     plainTextHtmlTemplate: standardPlainTextHtmlTemplate,
+    attributeWidthMax: standardAttributeMaxWidth,
   );
 
   /// The standard maximum image width is `null`, ie not restricted.
@@ -129,6 +138,9 @@ class TransformConfiguration {
   static const String standardEmptyMessageText =
       'This message has no contents.';
 
+  /// The standard maximum width for attributes is 400.
+  static const int standardAttributeMaxWidth = 400;
+
   /// The list of default DOM transformers
   static const List<DomTransformer> standardDomTransformers = [
     ViewPortTransformer(),
@@ -136,6 +148,7 @@ class TransformConfiguration {
     ImageTransformer(),
     EnsureRelationNoreferrerTransformer(),
     DarkModeTransformer(),
+    WidthTransformer(),
   ];
 
   /// The list of default text transformers
@@ -155,8 +168,11 @@ abstract class DomTransformer {
   /// Transforms the [document] of the [message] using [configuration].
   ///
   /// All changes will be visible to subsequent transformers.
-  void process(Document document, MimeMessage message,
-      TransformConfiguration configuration);
+  void process(
+    Document document,
+    MimeMessage message,
+    TransformConfiguration configuration,
+  );
 
   /// Adds a HEAD element if necessary
   void ensureDocumentHeadIsAvailable(Document document) {

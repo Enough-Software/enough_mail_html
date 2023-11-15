@@ -15,12 +15,15 @@ class ViewPortTransformer extends DomTransformer {
       Element.html('<meta name="viewport" content="$_viewPortContent">');
   static final Element _contentTypeMetaElement = Element.html(
       '<meta http-equiv="Content-Type" content="text/html; charset=utf-8">');
-  static final Element _wordWrapStyleElement =
-      Element.html('<style type="text/css">* {word-wrap: break-word;}</style>');
+  static final Element _wordWrapStyleElement = Element.html(
+      '<style type="text/css">* {word-wrap: break-word; word-break: break-word;}</style>');
 
   @override
-  void process(Document document, MimeMessage message,
-      TransformConfiguration configuration) {
+  void process(
+    Document document,
+    MimeMessage message,
+    TransformConfiguration configuration,
+  ) {
     final metaElements = document.getElementsByTagName('meta');
     var viewportNeedsToBeAdded = true;
     var contentTypeNeedsToBeAdded = true;

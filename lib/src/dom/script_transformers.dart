@@ -5,11 +5,14 @@ import '../enough_mail_html_base.dart';
 
 /// Removes script references from a DOM
 class RemoveScriptTransformer extends DomTransformer {
-  /// Craetes a new script removing transformer
+  /// Creates a new script removing transformer
   const RemoveScriptTransformer();
   @override
-  void process(Document document, MimeMessage message,
-      TransformConfiguration configuration) {
+  void process(
+    Document document,
+    MimeMessage message,
+    TransformConfiguration configuration,
+  ) {
     final scriptElements = document.getElementsByTagName('script');
     for (final scriptElement in scriptElements) {
       scriptElement.remove();
