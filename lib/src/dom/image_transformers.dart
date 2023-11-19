@@ -69,6 +69,12 @@ class ImageTransformer extends DomTransformer {
             imageElement.attributes['src'] = 'https:$url';
           }
         }
+      } // src != null
+      final style = imageElement.attributes['style'];
+      if (style == null) {
+        imageElement.attributes['style'] = 'max-width: 100%;';
+      } else if (!style.contains('max-width')) {
+        imageElement.attributes['style'] = '$style max-width: 100%;';
       }
     }
     // integrate other inline images:
@@ -85,8 +91,11 @@ class ImageTransformer extends DomTransformer {
           if (part != null) {
             final data = toImageData(part, info.mediaType, configuration);
             final imageElement = Element.html(
-                '<a href="fetch://${info.fetchId}"><img src="$data" alt="${info.fileName}" /></a>');
-            document.body!.append(imageElement);
+              '<a href="fetch://${info.fetchId}">'
+              '<img src="$data" alt="${info.fileName}" />'
+              '</a>',
+            );
+            document.body?.append(imageElement);
           }
         }
       }
