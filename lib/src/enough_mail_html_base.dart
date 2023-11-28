@@ -101,7 +101,7 @@ class TransformConfiguration {
   /// before a plain text message without HTML part is converted into HTML
   final List<TextTransformer> textTransformers;
 
-  /// The maximum value for width attributes, defaults to 400.
+  /// The maximum value for width attributes, defaults to 300.
   final int attributeWidthMax;
 
   /// Optional custom values, `null` unless specified.
@@ -129,7 +129,7 @@ class TransformConfiguration {
   /// `<p>{text}</p>`
   static const String standardPlainTextHtmlTemplate = '<html><head>'
       '<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=5.0, minimum-scale=0.5"</meta>'
-      '<style> * {word-wrap: break-word;}</style>'
+      '<style> * {word-wrap: break-word; word-break: break-word;}</style>'
       '</head><body>'
       '<p>{text}</p>'
       '</body></html>';
@@ -138,8 +138,8 @@ class TransformConfiguration {
   static const String standardEmptyMessageText =
       'This message has no contents.';
 
-  /// The standard maximum width for attributes is 400.
-  static const int standardAttributeMaxWidth = 400;
+  /// The standard maximum width for attributes is 300.
+  static const int standardAttributeMaxWidth = 300;
 
   /// The list of default DOM transformers
   static const List<DomTransformer> standardDomTransformers = [
