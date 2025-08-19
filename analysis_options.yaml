@@ -1,8 +1,7 @@
 analyzer:
   errors:
     todo: ignore
-  plugins:
-    - dart_code_metrics # https://github.com/dart-code-checker/dart-code-metrics
+
 linter:
   rules:
     - always_declare_return_types
@@ -73,7 +72,6 @@ linter:
     - one_member_abstracts
     - only_throw_errors
     - overridden_fields
-    - package_api_docs
     - package_names
     - package_prefixed_library_names
     - parameter_assignments
