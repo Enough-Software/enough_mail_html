@@ -55,14 +55,14 @@ class TransformConfiguration {
     final textTransformers = (customTextTransformers != null)
         ? [...standardTextTransformers, ...customTextTransformers]
         : standardTextTransformers;
-    maxImageWidth ??= standardMaxImageWidth;
+    final effectiveMaxImageWidth = maxImageWidth ?? standardMaxImageWidth;
 
     return TransformConfiguration(
       blockExternalImages: blockExternalImages,
       preferPlainText: preferPlainText,
       enableDarkMode: enableDarkMode,
       emptyMessageText: emptyMessageText ?? standardEmptyMessageText,
-      maxImageWidth: maxImageWidth,
+      maxImageWidth: effectiveMaxImageWidth,
       domTransformers: domTransformers,
       textTransformers: textTransformers,
       plainTextHtmlTemplate: plainTextHtmlTemplate,
@@ -111,23 +111,24 @@ class TransformConfiguration {
   /// that does not block external images.
   static const TransformConfiguration standardConfiguration =
       TransformConfiguration(
-    blockExternalImages: false,
-    preferPlainText: false,
-    enableDarkMode: false,
-    emptyMessageText: standardEmptyMessageText,
-    maxImageWidth: standardMaxImageWidth,
-    domTransformers: standardDomTransformers,
-    textTransformers: standardTextTransformers,
-    plainTextHtmlTemplate: standardPlainTextHtmlTemplate,
-    attributeWidthMax: standardAttributeMaxWidth,
-  );
+        blockExternalImages: false,
+        preferPlainText: false,
+        enableDarkMode: false,
+        emptyMessageText: standardEmptyMessageText,
+        maxImageWidth: standardMaxImageWidth,
+        domTransformers: standardDomTransformers,
+        textTransformers: standardTextTransformers,
+        plainTextHtmlTemplate: standardPlainTextHtmlTemplate,
+        attributeWidthMax: standardAttributeMaxWidth,
+      );
 
   /// The standard maximum image width is `null`, ie not restricted.
   static const int? standardMaxImageWidth = null;
 
   /// Embeds the plain text in a paragraph
   /// `<p>{text}</p>`
-  static const String standardPlainTextHtmlTemplate = '<html><head>'
+  static const String standardPlainTextHtmlTemplate =
+      '<html><head>'
       '<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=5.0, minimum-scale=0.5"</meta>'
       '<style> * {word-wrap: break-word; word-break: break-word;}</style>'
       '</head><body>'
@@ -208,8 +209,9 @@ class MimeMessageTransformer {
 
   /// Transforms the DOM or plain text of the given [message].
   Document toDocument(MimeMessage message) {
-    var html =
-        configuration.preferPlainText ? null : message.decodeTextHtmlPart();
+    var html = configuration.preferPlainText
+        ? null
+        : message.decodeTextHtmlPart();
     if (html == null) {
       var textPart = message.decodeTextPlainPart();
       if (textPart == null && configuration.preferPlainText) {
@@ -230,8 +232,10 @@ class MimeMessageTransformer {
       } else {
         textPart = transformPlainText(textPart, message);
       }
-      html =
-          configuration.plainTextHtmlTemplate.replaceFirst('{text}', textPart);
+      html = configuration.plainTextHtmlTemplate.replaceFirst(
+        '{text}',
+        textPart,
+      );
     } else if (configuration.enableDarkMode) {
       // hack to remove any white bgcolor values:
       html = html.replaceAll('bgcolor="#FFFFFF"', '');
@@ -252,13 +256,17 @@ class MimeMessageTransformer {
 }
 
 /// Transforms plain text messages.
+// ignore: one_member_abstracts
 abstract class TextTransformer {
   /// Creates a new text transformer
   const TextTransformer();
 
   /// Transforms the given [text] of the [message] using the [configuration ]
   String transform(
-      String text, MimeMessage message, TransformConfiguration configuration);
+    String text,
+    MimeMessage message,
+    TransformConfiguration configuration,
+  );
 }
 
 /// Extends the MimeMessage with the [transformToHtml] method.
